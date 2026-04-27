@@ -188,7 +188,7 @@
 
                     <div class="grid grid-cols-3 gap-2">
                         <div><label class="text-[9px] text-cyan-500">VIB (mm/s)</label><input type="number" id="in_vib" step="0.1" required class="cyber-input w-full rounded p-1 text-xs"></div>
-                        <div><label class="text-[9px] text-cyan-500">TEMP (°C)</label><input type="number" id="in_temp" required class="cyber-input w-full rounded p-1 text-xs"></div>
+                        <div><label class="text-[9px] text-cyan-500">TEMP (°C)</label><input type="number" id="in_temp" step="0.1" required class="cyber-input w-full rounded p-1 text-xs"></div>
                         <div><label class="text-[9px] text-cyan-500">RPM</label><input type="number" id="in_rpm" required class="cyber-input w-full rounded p-1 text-xs"></div>
                     </div>
 
@@ -230,7 +230,7 @@
                         <span id="ind_mttr" class="absolute top-2 right-2 text-[8px] px-1.5 py-0.5 rounded border border-current hidden"></span>
                     </div>
                 </div>
-                <div class="relative h-32 w-full"><canvas id="chartKpis"></canvas></div>
+                <div class="relative h-40 w-full"><canvas id="chartKpis"></canvas></div>
             </div>
 
             <!-- Matriz de Sensores -->
@@ -359,9 +359,9 @@
                 </div>
 
                 <!-- Recomendaciones IA -->
-                <div class="glass-card p-4 bg-indigo-900/20 border-indigo-500/30">
+                <div class="glass-card p-4 bg-indigo-900/20 border-indigo-500/30 flex flex-col">
                     <h2 class="font-tech text-xs text-indigo-400 font-bold mb-2"><i class="fas fa-robot mr-2"></i>Recomendaciones IA</h2>
-                    <div id="ai-recommendations" class="text-[10px] space-y-2 text-slate-300">
+                    <div id="ai-recommendations" class="text-[10px] space-y-2 text-slate-300 flex-grow">
                         <p class="italic text-slate-500">Procesa datos para obtener análisis sintético y recomendaciones automáticas...</p>
                     </div>
                 </div>
@@ -380,7 +380,7 @@
         // ----------------------------------------------------
         // ESTADO GLOBAL
         // ----------------------------------------------------
-        let db = []; // Base de datos principal
+        let db = []; // Base de datos principal vacía al inicio
         let selectedRows = new Set(); // Filas seleccionadas para análisis
         let chartTendenciaObj = null;
         let chartScatterObj = null;
@@ -407,6 +407,25 @@
             {id: 'v_escape', label: 'Gases de Escape'},
             {id: 'v_doc', label: 'Documentación / Seguro'}
         ];
+
+        function initAdvCards() {
+            const container = document.getElementById('advCards');
+            let html = '';
+            advMetricsConfig.forEach(c => {
+                html += `
+                <div class="bg-slate-800/40 p-3 rounded-lg border border-cyan-500/10 hover:border-cyan-500/40 transition-all">
+                    <p class="text-[9px] text-slate-400 uppercase font-bold truncate" title="${c.name}">${c.name}</p>
+                    <p id="val_${c.id}" class="stat-value text-base text-white mt-1">Sin datos</p>
+                    <div class="prog-bar-bg"><div id="bar_${c.id}" class="prog-bar-fill bg-cyan-500" style="width: 0%"></div></div>
+                    <p class="text-[7px] text-slate-500 mt-1 flex justify-between">
+                        <span>Min:${c.min >= 1000 ? c.min/1000+'k' : c.min}</span>
+                        <span class="text-emerald-500">Opt:${c.optMin >= 1000 ? c.optMin/1000+'k' : c.optMin}-${c.optMax >= 1000 ? c.optMax/1000+'k' : c.optMax}</span>
+                        <span>Max:${c.max >= 1000 ? c.max/1000+'k' : c.max}</span>
+                    </p>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
 
         function renderVTV() {
             const container = document.getElementById('vtv-items-container');
@@ -471,6 +490,7 @@
         window.onload = () => {
             initAdvCards();
             renderVTV();
+            document.getElementById('in_fecha').valueAsDate = new Date();
             actualizarDashboard(); // Inicia limpio sin mock data
         };
 
@@ -998,7 +1018,7 @@
                 margin:       [10, 10, 10, 10],
                 filename:     `NEXO_ART_Report_${new Date().toISOString().split('T')[0]}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#0a0e1a' },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
             };
 
