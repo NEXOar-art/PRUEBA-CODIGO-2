@@ -135,7 +135,7 @@
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-            <button onclick="limpiarFiltros()" class="btn-neon px-3 py-1.5 rounded text-xs"><i class="fas fa-filter-circle-xmark mr-1"></i>Reset</button>
+            <button onclick="limpiarFiltros()" class="btn-neon px-3 py-1.5 rounded text-xs" title="Borrar toda la base de datos"><i class="fas fa-trash-alt mr-1"></i>Reset DB</button>
             <button onclick="exportarCSV()" class="btn-neon px-3 py-1.5 rounded text-xs"><i class="fas fa-file-csv mr-1"></i>CSV</button>
             <button onclick="exportarPDF()" class="btn-neon px-3 py-1.5 rounded text-xs"><i class="fas fa-file-pdf mr-1"></i>PDF</button>
             <button onclick="location.reload()" class="btn-neon px-3 py-1.5 rounded text-xs"><i class="fas fa-sync-alt mr-1"></i>Actualizar</button>
@@ -343,8 +343,16 @@
                 <div class="glass-card p-4 lg:col-span-2 overflow-hidden flex flex-col">
                     <div class="flex justify-between items-center mb-2">
                         <h2 class="font-tech text-xs text-cyan-400 font-bold"><i class="fas fa-table mr-2"></i>Dataset Acumulado</h2>
-                        <span class="text-[9px] text-slate-400" id="dataset-count">0 registros</span>
+                        <span class="text-[9px] text-slate-400" id="dataset-count">0/2000 registros</span>
                     </div>
+
+                    <!-- Buscador Histórico -->
+                    <div class="flex gap-2 mb-3 bg-slate-900/40 p-2 rounded border border-cyan-500/20">
+                        <input type="text" id="search_id" class="cyber-input flex-1 rounded p-1.5 text-[10px] uppercase" placeholder="Buscar por ID o Unidad..." oninput="filtrarDataset()">
+                        <input type="date" id="search_fecha" class="cyber-input flex-1 rounded p-1.5 text-[10px]" oninput="filtrarDataset()">
+                        <button onclick="limpiarBusqueda()" class="btn-neon px-2 py-1 rounded text-xs" title="Limpiar Búsqueda"><i class="fas fa-times"></i></button>
+                    </div>
+
                     <div class="overflow-auto max-h-[200px]">
                         <table class="w-full text-[9px] text-left cyber-table" id="table-dataset">
                             <thead>
@@ -378,10 +386,15 @@
     <!-- Funcionalidad JavaScript -->
     <script>
         // ----------------------------------------------------
-        // ESTADO GLOBAL
+        // ESTADO GLOBAL Y CONFIGURACIÓN MEMORIA
         // ----------------------------------------------------
-        let db = []; // Base de datos principal vacía al inicio
+        const MAX_RECORDS = 2000;
+        const STORAGE_KEY = 'nexo_art_db';
+        let db = []; // Base de datos principal
         let selectedRows = new Set(); // Filas seleccionadas para análisis
+        let filtroActualID = "";
+        let filtroActualFecha = "";
+
         let chartTendenciaObj = null;
         let chartScatterObj = null;
         let chartKpisObj = null;
@@ -408,6 +421,33 @@
             {id: 'v_doc', label: 'Documentación / Seguro'}
         ];
 
+        // ----------------------------------------------------
+        // MANEJO DE MEMORIA LOCAL (LOCALSTORAGE)
+        // ----------------------------------------------------
+        function guardarEnMemoria() {
+            if (db.length > MAX_RECORDS) {
+                db = db.slice(db.length - MAX_RECORDS);
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+        }
+
+        function cargarDeMemoria() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (data) {
+                try {
+                    db = JSON.parse(data);
+                } catch (e) {
+                    console.error("Error parseando localStorage", e);
+                    db = [];
+                }
+            } else {
+                db = [];
+            }
+        }
+
+        // ----------------------------------------------------
+        // FUNCIONES DE INTERFAZ BÁSICA (CARTAS, VTV)
+        // ----------------------------------------------------
         function initAdvCards() {
             const container = document.getElementById('advCards');
             let html = '';
@@ -490,8 +530,9 @@
         window.onload = () => {
             initAdvCards();
             renderVTV();
+            cargarDeMemoria();
             document.getElementById('in_fecha').valueAsDate = new Date();
-            actualizarDashboard(); // Inicia limpio sin mock data
+            actualizarDashboard();
         };
 
         // ----------------------------------------------------
@@ -519,19 +560,50 @@
             };
 
             db.push(record);
+            guardarEnMemoria();
             e.target.reset(); // Limpiar formulario
             
             // Setear fecha de hoy en el form por conveniencia
             document.getElementById('in_fecha').valueAsDate = new Date();
             
-            selectedRows.clear(); // Se reinician los filtros para evaluar lo nuevo y todo el conjunto
+            selectedRows.clear(); 
             actualizarDashboard();
         }
 
         function limpiarFiltros() {
-            db = [];
+            if(confirm("⚠️ ¿Seguro que deseas borrar toda la base de datos (se perderá el histórico)?")) {
+                db = [];
+                guardarEnMemoria();
+                selectedRows.clear();
+                limpiarBusqueda();
+                actualizarDashboard();
+            }
+        }
+
+        // Controladores del Buscador
+        function filtrarDataset() {
+            filtroActualID = document.getElementById('search_id').value.toUpperCase();
+            filtroActualFecha = document.getElementById('search_fecha').value;
+            selectedRows.clear(); // Limpiar selección para evaluar el nuevo conjunto
+            actualizarDashboard();
+        }
+
+        function limpiarBusqueda() {
+            document.getElementById('search_id').value = "";
+            document.getElementById('search_fecha').value = "";
+            filtroActualID = "";
+            filtroActualFecha = "";
             selectedRows.clear();
             actualizarDashboard();
+        }
+
+        // Función que obtiene la DB aplicando los filtros de búsqueda
+        function obtenerDbFiltrada() {
+            return db.filter(r => {
+                const matchID = filtroActualID === "" || r.id.includes(filtroActualID) || r.unidad.includes(filtroActualID);
+                const matchFecha = filtroActualFecha === "" || r.fecha === filtroActualFecha;
+                return matchID && matchFecha;
+            });
         }
 
         // Controladores de selección de filas
@@ -542,10 +614,17 @@
         }
 
         function toggleAllRows(isChecked) {
+            const dbFiltradaMap = db.map((r, i) => ({...r, originalIdx: i}))
+                                    .filter(r => {
+                                        const matchID = filtroActualID === "" || r.id.includes(filtroActualID) || r.unidad.includes(filtroActualID);
+                                        const matchFecha = filtroActualFecha === "" || r.fecha === filtroActualFecha;
+                                        return matchID && matchFecha;
+                                    });
+
             if(isChecked) {
-                db.forEach((_, i) => selectedRows.add(i));
+                dbFiltradaMap.forEach(r => selectedRows.add(r.originalIdx));
             } else {
-                selectedRows.clear();
+                dbFiltradaMap.forEach(r => selectedRows.delete(r.originalIdx));
             }
             actualizarDashboard();
         }
@@ -554,10 +633,11 @@
         // ACTUALIZACIÓN GLOBAL
         // ----------------------------------------------------
         function actualizarDashboard() {
-            renderDatasetTable();
+            const dbFiltrada = obtenerDbFiltrada();
+            renderDatasetTable(dbFiltrada);
             
-            // Si hay filas seleccionadas usar esas, sino usar toda la DB
-            const activeDb = selectedRows.size > 0 ? db.filter((_, i) => selectedRows.has(i)) : db;
+            // Si hay filas seleccionadas usar esas, sino usar toda la DB filtrada actual
+            const activeDb = selectedRows.size > 0 ? db.filter((_, i) => selectedRows.has(i)) : dbFiltrada;
             
             calcKPIsGenerales(activeDb);
             
@@ -671,23 +751,19 @@
         }
 
         function calcMetricasAvanzadas(last) {
-            // Fórmulas ficticias pero lógicas (Motor Intelligence)
             const values = getSynthetic(last);
 
-            // Actualizar UI
             advMetricsConfig.forEach(config => {
                 const val = values[config.id];
                 const displayVal = (config.unit === '%') ? val.toFixed(1) : (val > 1000 ? (val/1000).toFixed(1)+'k' : val.toFixed(2));
                 
-                // Determinar estado/color
                 let colorClass = 'bg-cyan-500';
-                if(val < config.optMin) colorClass = 'bg-amber-400'; // Bajo
-                else if(val > config.optMax) colorClass = 'bg-rose-500'; // Alto (Crítico)
-                else colorClass = 'bg-emerald-400'; // Óptimo
+                if(val < config.optMin) colorClass = 'bg-amber-400'; 
+                else if(val > config.optMax) colorClass = 'bg-rose-500'; 
+                else colorClass = 'bg-emerald-400'; 
 
-                // Calc % para la barra
                 let pct = ((val - config.min) / (config.max - config.min)) * 100;
-                pct = Math.max(0, Math.min(100, pct)); // Clamp 0-100
+                pct = Math.max(0, Math.min(100, pct)); 
 
                 document.getElementById(`val_${config.id}`).innerText = displayVal + config.unit;
                 document.getElementById(`bar_${config.id}`).style.width = pct + '%';
@@ -708,7 +784,6 @@
                 {key: 'q75', label: '75%'}, {key: 'max', label: 'max'}
             ];
 
-            // Helper para obtener estadísticas
             function getStats(arr) {
                 if(arr.length === 0) return null;
                 arr.sort((a,b) => a-b);
@@ -731,7 +806,6 @@
                 };
             }
 
-            // Calcular stats por columna
             const matrixStats = {};
             cols.forEach(col => {
                 const dataArr = activeDb.map(r => r[col]);
@@ -775,11 +849,8 @@
                 return;
             }
 
-            // Integrando variables sintéticas
             const extDb = activeDb.map(r => ({ ...r, ...getSynthetic(r) }));
             const cols = ['km', 'vib', 'temp', 'down', 'desgaste', 'termovib', 'inactividad', 'eficiencia', 'estres', 'dispOp'];
-            
-            // Abreviaturas para la tabla
             const colLabels = { km: 'KM', vib: 'VIB', temp: 'TMP', down: 'DWN', desgaste: 'DSG', termovib: 'TMV', inactividad: 'INA', eficiencia: 'EFI', estres: 'EST', dispOp: 'DOP' };
 
             const headerHTML = `<thead><tr><th></th>${cols.map(c => `<th title="${c}">${colLabels[c]}</th>`).join('')}</tr></thead>`;
@@ -792,7 +863,6 @@
                     const arrY = extDb.map(r => r[colCol]);
                     const coef = pearson(arrX, arrY);
                     
-                    // Coloreado térmico
                     const intensity = Math.abs(coef);
                     let bgColor = 'transparent';
                     if(intensity > 0.5) bgColor = coef > 0 ? `rgba(16, 185, 129, ${intensity-0.3})` : `rgba(244, 63, 94, ${intensity-0.3})`;
@@ -815,25 +885,20 @@
             if(!activeDb || activeDb.length === 0) return;
             const last = activeDb[activeDb.length-1];
             
-            // Recoger sensores tildados
             const chks = document.querySelectorAll('.sensor-chk:checked');
             const sensoresFallando = Array.from(chks).map(c => c.value);
 
             let html = '';
             
-            // Analizar Temp
             if(last.temp > 95) html += `<p class="border-l-2 border-rose-500 pl-2">⚠️ <span class="text-rose-400 font-bold">ALERTA TÉRMICA:</span> Temp ${last.temp.toFixed(1)}°C detectada en ${last.unidad}. Revisar termostato o refrigerante urgente.</p>`;
             else if(last.temp > 85) html += `<p class="border-l-2 border-amber-500 pl-2">🟡 <span class="text-amber-400">Atención Térmica:</span> Temp ${last.temp.toFixed(1)}°C. Monitorear.</p>`;
 
-            // Analizar Vib
             if(last.vib > 4) html += `<p class="border-l-2 border-rose-500 pl-2">〰️ <span class="text-rose-400 font-bold">VIBRACIÓN ALTA:</span> ${last.vib.toFixed(1)} mm/s. Riesgo de rodamiento desgastado o desbalanceo inminente.</p>`;
 
-            // Analizar Sensores manuales vs datos
             if(sensoresFallando.includes("Presión Aceite") && last.rpm > 3000) {
                 html += `<p class="border-l-2 border-rose-500 pl-2">🔥 <span class="text-rose-400 font-bold">CRÍTICO:</span> Presión de aceite reportada con altas RPM. Riesgo de fundición de motor.</p>`;
             }
 
-            // Mantenimiento por KM (Cluster predictivo)
             if(last.km > 150000) html += `<p class="border-l-2 border-purple-500 pl-2">⚙️ <span class="text-purple-400">Análisis KM:</span> Vehículo en cluster de +150k km. Revisar caja de cambios y compresión de cilindros preventivamente.</p>`;
             else if(last.km > 60000) html += `<p class="border-l-2 border-blue-500 pl-2">⚙️ <span class="text-blue-400">Análisis KM:</span> Vehículo en cluster medio. Verificar embrague y distribución.</p>`;
 
@@ -845,15 +910,21 @@
         // ----------------------------------------------------
         // TABLAS Y GRÁFICOS UI
         // ----------------------------------------------------
-        function renderDatasetTable() {
+        function renderDatasetTable(dbFiltrada) {
             const tbody = document.getElementById('tbody-dataset');
-            document.getElementById('dataset-count').innerText = `${db.length} registros`;
+            document.getElementById('dataset-count').innerText = `${db.length}/${MAX_RECORDS} registros (Memoria)`;
             
             let html = '';
-            // Preservamos el Index original al mapear para poder interactuar y tildar registros exactos
-            const copyDb = db.map((r, i) => ({...r, originalIdx: i})).reverse();
             
-            copyDb.forEach(r => {
+            // Map original index to preserve interaction, then filter, then reverse for display (newest first)
+            const displayDb = db.map((r, i) => ({...r, originalIdx: i}))
+                                .filter(r => {
+                                    const matchID = filtroActualID === "" || r.id.includes(filtroActualID) || r.unidad.includes(filtroActualID);
+                                    const matchFecha = filtroActualFecha === "" || r.fecha === filtroActualFecha;
+                                    return matchID && matchFecha;
+                                }).reverse();
+            
+            displayDb.forEach(r => {
                 const checked = selectedRows.has(r.originalIdx) ? 'checked' : '';
                 html += `
                 <tr class="${checked ? 'bg-cyan-900/20' : ''}">
@@ -872,7 +943,7 @@
             tbody.innerHTML = html;
 
             const chkAll = document.getElementById('chk-all');
-            if(chkAll) chkAll.checked = (db.length > 0 && selectedRows.size === db.length);
+            if(chkAll) chkAll.checked = (displayDb.length > 0 && Array.from(selectedRows).length === displayDb.length);
         }
 
         function drawCharts(activeDb) {
@@ -886,11 +957,10 @@
                 return;
             }
             
-            const labels = activeDb.map(r => formatearFechaCorto(r.fecha)); // Mes-Dia
+            const labels = activeDb.map(r => formatearFechaCorto(r.fecha)); 
             const tempData = activeDb.map(r => r.temp);
             const vibData = activeDb.map(r => r.vib);
 
-            // Chart Rendimiento (Disp, Uptime, Downtime Históricos)
             const upData = activeDb.map(r => r.up);
             const downData = activeDb.map(r => r.down);
             const dispData = activeDb.map(r => ((r.up / (r.up + r.down)) * 100).toFixed(1));
@@ -918,7 +988,6 @@
                 }
             });
 
-            // Chart Tendencia
             const ctxT = document.getElementById('chartTendencia').getContext('2d');
             if(chartTendenciaObj) chartTendenciaObj.destroy();
             chartTendenciaObj = new Chart(ctxT, {
@@ -941,7 +1010,6 @@
                 }
             });
 
-            // Chart Scatter (KM vs Falla Probabilidad Simulada)
             const scatterData = activeDb.map(r => {
                 let probFalla = (r.down * 2) + (r.temp > 90 ? 20 : 0) + (r.vib * 5);
                 let p = Math.min(100, probFalla);
@@ -957,7 +1025,7 @@
             const ctxS = document.getElementById('chartScatter').getContext('2d');
             if(chartScatterObj) chartScatterObj.destroy();
             chartScatterObj = new Chart(ctxS, {
-                type: 'bubble', // Usamos bubble para añadir la dimensión de costo/gravedad visual
+                type: 'bubble', 
                 data: {
                     datasets: [{
                         label: 'Prob. Falla (%)',
@@ -990,14 +1058,14 @@
         // EXPORTACIÓN DE DATOS (CSV Y PDF)
         // ----------------------------------------------------
         function exportarCSV() {
-            if(db.length === 0) return alert("No hay datos para exportar.");
+            const activeDb = selectedRows.size > 0 ? db.filter((_, i) => selectedRows.has(i)) : obtenerDbFiltrada();
+            if(activeDb.length === 0) return alert("No hay datos para exportar.");
             
-            const keys = Object.keys(db[0]);
+            const keys = Object.keys(activeDb[0]).filter(k => k !== 'originalIdx');
             let csvContent = "data:text/csv;charset=utf-8," 
                 + keys.join(",") + "\n"
-                + db.map(e => keys.map(k => {
+                + activeDb.map(e => keys.map(k => {
                     let val = e[k];
-                    // Escapar comas en textos (ej: detalle de trabajo)
                     if(typeof val === 'string' && val.includes(',')) return `"${val}"`;
                     return val;
                 }).join(",")).join("\n");
@@ -1012,7 +1080,6 @@
         }
 
         function exportarPDF() {
-            // Usamos html2pdf si no, fallback a print
             const element = document.getElementById('dashboard-body');
             const opt = {
                 margin:       [10, 10, 10, 10],
@@ -1022,18 +1089,16 @@
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
             };
 
-            // Ocultar elementos no imprimibles temporalmente
             document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
             
             html2pdf().set(opt).from(element).save().then(() => {
-                // Restaurar vista
                 document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
             });
         }
 
         // Integración Hub -> WhatsApp
         function enviarWhatsApp() {
-            const activeDb = selectedRows.size > 0 ? db.filter((_, i) => selectedRows.has(i)) : db;
+            const activeDb = selectedRows.size > 0 ? db.filter((_, i) => selectedRows.has(i)) : obtenerDbFiltrada();
             if(activeDb.length === 0) return alert("No hay datos para reportar.");
             const last = activeDb[activeDb.length-1];
             const syn = getSynthetic(last);
