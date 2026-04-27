@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NEXO-ART Motor Intelligence - HUB Dashboard</title>
     
     <!-- Librerías -->
@@ -54,6 +54,9 @@
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: rgba(6, 182, 212, 0.4); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(6, 182, 212, 0.5); }
 
         .glass-card {
             background: rgba(15, 23, 42, 0.7);
@@ -97,6 +100,11 @@
             box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
         }
 
+        /* Prevent zoom on mobile inputs */
+        @media screen and (max-width: 768px) {
+            input, select, textarea { font-size: 16px !important; }
+        }
+
         .stat-value { font-family: 'Orbitron', sans-serif; }
 
         /* Progress Bar Base */
@@ -134,7 +142,7 @@
                 <p class="text-xs tracking-[0.2em] text-cyan-500/80 uppercase font-tech">Motor Intelligence</p>
             </div>
         </div>
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="flex flex-wrap items-center justify-center gap-2">
             <button onclick="limpiarFiltros()" class="btn-neon px-3 py-1.5 rounded text-xs" title="Borrar toda la base de datos"><i class="fas fa-trash-alt mr-1"></i>Reset DB</button>
             <button onclick="exportarCSV()" class="btn-neon px-3 py-1.5 rounded text-xs"><i class="fas fa-file-csv mr-1"></i>CSV</button>
             <button onclick="exportarPDF()" class="btn-neon px-3 py-1.5 rounded text-xs"><i class="fas fa-file-pdf mr-1"></i>PDF</button>
@@ -348,17 +356,17 @@
 
                     <!-- Buscador Histórico -->
                     <div class="flex gap-2 mb-3 bg-slate-900/40 p-2 rounded border border-cyan-500/20">
-                        <input type="text" id="search_id" class="cyber-input flex-1 rounded p-1.5 text-[10px] uppercase" placeholder="Buscar por ID o Unidad..." oninput="filtrarDataset()">
+                        <input type="text" id="search_id" class="cyber-input flex-1 rounded p-1.5 text-[10px] uppercase" placeholder="Buscar ID / Unidad" oninput="filtrarDataset()">
                         <input type="date" id="search_fecha" class="cyber-input flex-1 rounded p-1.5 text-[10px]" oninput="filtrarDataset()">
                         <button onclick="limpiarBusqueda()" class="btn-neon px-2 py-1 rounded text-xs" title="Limpiar Búsqueda"><i class="fas fa-times"></i></button>
                     </div>
 
-                    <div class="overflow-auto max-h-[200px]">
+                    <div class="overflow-auto max-h-[250px]">
                         <table class="w-full text-[9px] text-left cyber-table" id="table-dataset">
                             <thead>
                                 <tr>
                                     <th class="w-8 text-center"><input type="checkbox" id="chk-all" onchange="toggleAllRows(this.checked)" title="Seleccionar todo"></th>
-                                    <th>Fecha</th><th>Unidad</th><th>Motor</th><th>KM</th><th>UP</th><th>DOWN</th><th>VIB</th><th>TEMP</th><th>Detalle</th>
+                                    <th>Fecha</th><th>Unidad</th><th>Motor</th><th>KM</th><th>UP</th><th>DOWN</th><th>VIB</th><th>TEMP</th><th class="w-16 text-center">Detalle</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody-dataset"></tbody>
@@ -369,7 +377,7 @@
                 <!-- Recomendaciones IA -->
                 <div class="glass-card p-4 bg-indigo-900/20 border-indigo-500/30 flex flex-col">
                     <h2 class="font-tech text-xs text-indigo-400 font-bold mb-2"><i class="fas fa-robot mr-2"></i>Recomendaciones IA</h2>
-                    <div id="ai-recommendations" class="text-[10px] space-y-2 text-slate-300 flex-grow">
+                    <div id="ai-recommendations" class="text-[10px] space-y-2 text-slate-300 flex-grow custom-scrollbar overflow-y-auto max-h-[200px] pr-1">
                         <p class="italic text-slate-500">Procesa datos para obtener análisis sintético y recomendaciones automáticas...</p>
                     </div>
                 </div>
@@ -379,9 +387,24 @@
     </div>
 
     <!-- Botón WhatsApp -->
-    <a href="#" onclick="enviarWhatsApp()" class="fixed bottom-6 right-6 bg-green-500 text-white rounded-full w-14 h-14 flex items-center justify-center text-3xl shadow-[0_0_15px_rgba(34,197,94,0.6)] hover:scale-110 transition-transform z-50 no-print" title="ENVIAR DASHBOARD COMPLETO A WHATSAPP 3489686939">
+    <a href="#" onclick="enviarWhatsApp()" class="fixed bottom-6 right-6 bg-green-500 text-white rounded-full w-14 h-14 flex items-center justify-center text-3xl shadow-[0_0_15px_rgba(34,197,94,0.6)] hover:scale-110 transition-transform z-40 no-print" title="ENVIAR DASHBOARD COMPLETO A WHATSAPP 3489686939">
         <i class="fab fa-whatsapp"></i>
     </a>
+
+    <!-- Modal Detalle de Registro (Reporte Completo de Fila) -->
+    <div id="modal-detalle" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm no-print">
+        <div class="glass-card w-full max-w-lg p-5 relative flex flex-col max-h-[90vh]">
+            <button onclick="cerrarModalDetalle()" class="absolute top-4 right-4 text-cyan-400 hover:text-rose-400 transition-colors p-2">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <h3 class="font-tech text-lg text-cyan-400 font-bold mb-4 border-b border-cyan-500/30 pb-2">
+                <i class="fas fa-file-alt mr-2"></i>Reporte de Trabajo
+            </h3>
+            <div class="overflow-y-auto pr-2 text-sm text-slate-300 space-y-4 custom-scrollbar" id="modal-detalle-content">
+                <!-- Se inyecta por JS -->
+            </div>
+        </div>
+    </div>
 
     <!-- Funcionalidad JavaScript -->
     <script>
@@ -422,7 +445,7 @@
         ];
 
         // ----------------------------------------------------
-        // MANEJO DE MEMORIA LOCAL (LOCALSTORAGE)
+        // MANEJO DE MEMORIA LOCAL (LOCALSTORAGE CELULAR/PC)
         // ----------------------------------------------------
         function guardarEnMemoria() {
             if (db.length > MAX_RECORDS) {
@@ -443,6 +466,52 @@
             } else {
                 db = [];
             }
+        }
+
+        // ----------------------------------------------------
+        // MODAL DE DETALLE DE FILA
+        // ----------------------------------------------------
+        function verDetalle(idx) {
+            const r = db[idx];
+            if(!r) return;
+
+            const content = `
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-900/50 p-2 rounded border border-cyan-500/20"><span class="text-cyan-500 text-[10px] uppercase block font-bold">Unidad</span> <span class="font-bold text-white text-lg">${r.unidad}</span></div>
+                    <div class="bg-slate-900/50 p-2 rounded border border-cyan-500/20"><span class="text-cyan-500 text-[10px] uppercase block font-bold">ID Registro</span> <span class="font-bold text-white">${r.id}</span></div>
+                    <div class="bg-slate-900/50 p-2 rounded border border-cyan-500/20"><span class="text-cyan-500 text-[10px] uppercase block font-bold">Fecha</span> <span class="text-slate-200">${r.fecha}</span></div>
+                    <div class="bg-slate-900/50 p-2 rounded border border-cyan-500/20"><span class="text-cyan-500 text-[10px] uppercase block font-bold">Motor</span> <span class="text-slate-200">${r.motor}</span></div>
+                    <div class="bg-slate-900/50 p-2 rounded border border-cyan-500/20"><span class="text-cyan-500 text-[10px] uppercase block font-bold">Kilometraje</span> <span class="text-slate-200">${r.km.toLocaleString()} km</span></div>
+                    <div class="bg-slate-900/50 p-2 rounded border border-cyan-500/20"><span class="text-cyan-500 text-[10px] uppercase block font-bold">RPM</span> <span class="text-slate-200">${r.rpm}</span></div>
+                </div>
+
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-4 mb-2">Lecturas y Diagnóstico</h4>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                    <div class="bg-emerald-900/20 p-2 rounded border border-emerald-500/30"><span class="text-emerald-500 text-[10px] uppercase block">Uptime</span> <span class="font-bold text-white">${r.up} h</span></div>
+                    <div class="bg-rose-900/20 p-2 rounded border border-rose-500/30"><span class="text-rose-500 text-[10px] uppercase block">Downtime</span> <span class="font-bold text-white">${r.down} h</span></div>
+                    <div class="bg-purple-900/20 p-2 rounded border border-purple-500/30"><span class="text-purple-400 text-[10px] uppercase block">Vibración</span> <span class="font-bold text-white">${r.vib}</span></div>
+                    <div class="bg-amber-900/20 p-2 rounded border border-amber-500/30"><span class="text-amber-400 text-[10px] uppercase block">Temperatura</span> <span class="font-bold text-white">${r.temp}°</span></div>
+                </div>
+
+                <div class="grid grid-cols-4 gap-2 text-center mt-2">
+                    <div class="bg-slate-900/30 p-2 rounded border border-slate-700"><span class="text-slate-400 text-[9px] uppercase block">PSI DI</span> <span class="text-white">${r.psi_di}</span></div>
+                    <div class="bg-slate-900/30 p-2 rounded border border-slate-700"><span class="text-slate-400 text-[9px] uppercase block">PSI DD</span> <span class="text-white">${r.psi_dd}</span></div>
+                    <div class="bg-slate-900/30 p-2 rounded border border-slate-700"><span class="text-slate-400 text-[9px] uppercase block">PSI TI</span> <span class="text-white">${r.psi_ti}</span></div>
+                    <div class="bg-slate-900/30 p-2 rounded border border-slate-700"><span class="text-slate-400 text-[9px] uppercase block">PSI TD</span> <span class="text-white">${r.psi_td}</span></div>
+                </div>
+
+                <div class="mt-4">
+                    <span class="text-cyan-500 text-[11px] uppercase font-bold tracking-wider block mb-2"><i class="fas fa-tools mr-1"></i> Detalle del Trabajo Realizado</span>
+                    <div class="bg-black/60 p-4 rounded-lg border border-cyan-500/40 text-sm text-slate-200 whitespace-pre-wrap leading-relaxed">${r.trabajo || '<span class="italic text-slate-500">Sin detalles registrados en la bitácora.</span>'}</div>
+                </div>
+            `;
+
+            document.getElementById('modal-detalle-content').innerHTML = content;
+            document.getElementById('modal-detalle').classList.remove('hidden');
+        }
+
+        function cerrarModalDetalle() {
+            document.getElementById('modal-detalle').classList.add('hidden');
         }
 
         // ----------------------------------------------------
@@ -513,7 +582,6 @@
             }
         }
 
-        // Helper para formato de fecha en Eje X y Tabla
         function formatearFechaCorto(fechaStr) {
             if (!fechaStr) return '';
             const meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
@@ -563,7 +631,7 @@
             guardarEnMemoria();
             e.target.reset(); // Limpiar formulario
             
-            // Setear fecha de hoy en el form por conveniencia
+            // Setear fecha de hoy en el form
             document.getElementById('in_fecha').valueAsDate = new Date();
             
             selectedRows.clear(); 
@@ -597,7 +665,6 @@
             actualizarDashboard();
         }
 
-        // Función que obtiene la DB aplicando los filtros de búsqueda
         function obtenerDbFiltrada() {
             return db.filter(r => {
                 const matchID = filtroActualID === "" || r.id.includes(filtroActualID) || r.unidad.includes(filtroActualID);
@@ -606,7 +673,6 @@
             });
         }
 
-        // Controladores de selección de filas
         function toggleRow(index) {
             if(selectedRows.has(index)) selectedRows.delete(index);
             else selectedRows.add(index);
@@ -636,13 +702,12 @@
             const dbFiltrada = obtenerDbFiltrada();
             renderDatasetTable(dbFiltrada);
             
-            // Si hay filas seleccionadas usar esas, sino usar toda la DB filtrada actual
             const activeDb = selectedRows.size > 0 ? db.filter((_, i) => selectedRows.has(i)) : dbFiltrada;
             
             calcKPIsGenerales(activeDb);
             
             if(activeDb.length > 0) {
-                calcMetricasAvanzadas(activeDb[activeDb.length-1]); // Usamos el último para el snapshot
+                calcMetricasAvanzadas(activeDb[activeDb.length-1]); 
                 calcEstadisticasDescribe(activeDb);
                 calcMatrizCorrelacion(activeDb);
                 generarRecomendacionesIA(activeDb);
@@ -659,7 +724,6 @@
             initAdvCards();
         }
 
-        // Helper Variables Sintéticas
         function getSynthetic(r) {
             const desgaste = (r.km / 1000) * (r.vib / 2);
             const termovib = r.temp * r.vib * 100;
@@ -704,7 +768,6 @@
             document.getElementById('kpi_mtbf').innerText = mtbf.toFixed(1);
             document.getElementById('kpi_mttr').innerText = mttr.toFixed(1);
 
-            // Micro-indicadores
             const indDisp = document.getElementById('ind_disp');
             indDisp.classList.remove('hidden');
             if(disp >= 85) {
@@ -744,7 +807,6 @@
                 indMttr.innerText = 'Alto';
             }
 
-            // Cambiar colores generales si es crítico
             document.getElementById('kpi_disp').className = `stat-value text-xl font-bold mt-1 ${disp >= 85 ? 'text-emerald-400' : (disp >= 70 ? 'text-amber-400' : 'text-rose-400')}`;
             document.getElementById('kpi_mtbf').className = `stat-value text-xl font-bold mt-1 ${mtbf >= 100 ? 'text-emerald-400' : (mtbf >= 50 ? 'text-amber-400' : 'text-rose-400')}`;
             document.getElementById('kpi_mttr').className = `stat-value text-xl font-bold mt-1 ${mttr <= 5 ? 'text-emerald-400' : (mttr <= 15 ? 'text-amber-400' : 'text-rose-400')}`;
@@ -827,7 +889,6 @@
             table.innerHTML = headerHTML + bodyHTML;
         }
 
-        // Pearson Correlation
         function pearson(x, y) {
             const n = x.length;
             if(n === 0) return 0;
@@ -916,7 +977,6 @@
             
             let html = '';
             
-            // Map original index to preserve interaction, then filter, then reverse for display (newest first)
             const displayDb = db.map((r, i) => ({...r, originalIdx: i}))
                                 .filter(r => {
                                     const matchID = filtroActualID === "" || r.id.includes(filtroActualID) || r.unidad.includes(filtroActualID);
@@ -929,7 +989,7 @@
                 html += `
                 <tr class="${checked ? 'bg-cyan-900/20' : ''}">
                     <td class="text-center"><input type="checkbox" class="row-chk cursor-pointer" onchange="toggleRow(${r.originalIdx})" ${checked}></td>
-                    <td>${formatearFechaCorto(r.fecha)}</td>
+                    <td class="whitespace-nowrap">${formatearFechaCorto(r.fecha)}</td>
                     <td class="font-bold text-cyan-400">${r.unidad}</td>
                     <td>${r.motor}</td>
                     <td>${r.km.toLocaleString()}</td>
@@ -937,7 +997,11 @@
                     <td class="text-rose-400">${r.down.toFixed(1)}</td>
                     <td class="${r.vib > 4 ? 'text-rose-400 font-bold':''}">${r.vib.toFixed(1)}</td>
                     <td class="${r.temp > 95 ? 'text-rose-400 font-bold':''}">${r.temp.toFixed(1)}</td>
-                    <td class="truncate max-w-[100px]" title="${r.trabajo}">${r.trabajo}</td>
+                    <td class="text-center">
+                        <button onclick="verDetalle(${r.originalIdx})" class="btn-neon p-1 rounded-md text-[10px] w-full" title="Ver detalle del reporte">
+                            <i class="fas fa-eye"></i> Ver
+                        </button>
+                    </td>
                 </tr>`;
             });
             tbody.innerHTML = html;
@@ -1080,19 +1144,188 @@
         }
 
         function exportarPDF() {
-            const element = document.getElementById('dashboard-body');
+            const activeDb = selectedRows.size > 0 ? db.filter((_, i) => selectedRows.has(i)) : obtenerDbFiltrada();
+            if(activeDb.length === 0) return alert("No hay datos para exportar.");
+
+            // Recopilar datos clave
+            const last = activeDb[activeDb.length-1];
+            const syn = getSynthetic(last);
+            
+            const disp = document.getElementById('kpi_disp').innerText;
+            const mtbf = document.getElementById('kpi_mtbf').innerText;
+            const mttr = document.getElementById('kpi_mttr').innerText;
+            
+            const vtvPct = document.getElementById('vtv-pct').innerText;
+            const vtvStatus = document.getElementById('vtv-status-text').innerText;
+            const vtvChecks = Array.from(document.querySelectorAll('.vtv-chk:checked')).map(c => `<li><span style="color:#10b981; font-weight:bold;">✔</span> ${c.value}</li>`).join('');
+            const vtvUnchecks = Array.from(document.querySelectorAll('.vtv-chk:not(:checked)')).map(c => `<li><span style="color:#f43f5e; font-weight:bold;">✖</span> ${c.value}</li>`).join('');
+            
+            const aiHtml = document.getElementById('ai-recommendations').innerHTML;
+
+            const uniqueUnits = [...new Set(activeDb.map(r => r.unidad))];
+            const reportTitle = uniqueUnits.length === 1 ? `REPORTE TÉCNICO: ${uniqueUnits[0]}` : `REPORTE DE FLOTA (${uniqueUnits.length} Unidades)`;
+
+            // Construir Tabla Completa
+            let tableHtml = `
+                <table class="w-full text-left text-[10px] border-collapse mt-4">
+                    <thead>
+                        <tr class="bg-cyan-900 text-white">
+                            <th class="p-2 border border-cyan-700">Fecha</th>
+                            <th class="p-2 border border-cyan-700">Unidad</th>
+                            <th class="p-2 border border-cyan-700">KM</th>
+                            <th class="p-2 border border-cyan-700">Up/Down</th>
+                            <th class="p-2 border border-cyan-700">Vib/Temp</th>
+                            <th class="p-2 border border-cyan-700">RPM</th>
+                            <th class="p-2 border border-cyan-700">PSI Prom.</th>
+                            <th class="p-2 border border-cyan-700">Detalle Trabajo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            activeDb.forEach((r, idx) => {
+                const psiProm = (r.psi_di + r.psi_dd + r.psi_ti + r.psi_td) / 4;
+                const bgClass = idx % 2 === 0 ? 'bg-slate-50' : 'bg-white';
+                tableHtml += `
+                    <tr class="${bgClass} text-slate-700 break-inside-avoid">
+                        <td class="p-2 border border-slate-200 whitespace-nowrap">${formatearFechaCorto(r.fecha)}</td>
+                        <td class="p-2 border border-slate-200 font-bold">${r.unidad}</td>
+                        <td class="p-2 border border-slate-200">${r.km.toLocaleString()}</td>
+                        <td class="p-2 border border-slate-200"><span class="text-emerald-600">${r.up.toFixed(1)}h</span> / <span class="text-rose-600">${r.down.toFixed(1)}h</span></td>
+                        <td class="p-2 border border-slate-200"><span class="${r.vib>4?'text-rose-600 font-bold':''}">${r.vib.toFixed(1)}</span> / <span class="${r.temp>95?'text-rose-600 font-bold':''}">${r.temp.toFixed(1)}°</span></td>
+                        <td class="p-2 border border-slate-200">${r.rpm}</td>
+                        <td class="p-2 border border-slate-200">${psiProm.toFixed(1)}</td>
+                        <td class="p-2 border border-slate-200 text-[8px] leading-tight">${r.trabajo || '-'}</td>
+                    </tr>
+                `;
+            });
+            tableHtml += `</tbody></table>`;
+
+            // Plantilla PDF Persuasiva (A4 - Estilo Consultoría)
+            const pdfContainer = document.createElement('div');
+            pdfContainer.id = "temp-pdf-export";
+            pdfContainer.className = "bg-white text-slate-800 font-sans";
+            pdfContainer.style.width = "800px";
+            pdfContainer.style.position = "absolute";
+            pdfContainer.style.left = "-9999px";
+            pdfContainer.style.top = "0";
+
+            pdfContainer.innerHTML = `
+                <style>
+                    #temp-pdf-export .text-rose-400, #temp-pdf-export .text-rose-500 { color: #e11d48 !important; }
+                    #temp-pdf-export .text-amber-400, #temp-pdf-export .text-amber-500 { color: #d97706 !important; }
+                    #temp-pdf-export .text-emerald-400, #temp-pdf-export .text-emerald-500 { color: #059669 !important; }
+                    #temp-pdf-export .text-purple-400, #temp-pdf-export .text-purple-500 { color: #7e22ce !important; }
+                    #temp-pdf-export .text-cyan-400, #temp-pdf-export .text-cyan-500 { color: #0e7490 !important; }
+                    #temp-pdf-export .text-blue-400, #temp-pdf-export .text-blue-500 { color: #1d4ed8 !important; }
+                    #temp-pdf-export .text-slate-300, #temp-pdf-export .text-slate-400, #temp-pdf-export .text-slate-500 { color: #334155 !important; }
+                    #temp-pdf-export p { margin-bottom: 0.5rem; }
+                </style>
+                <div style="padding: 40px;">
+                    <!-- HEADER -->
+                    <div class="flex justify-between items-center border-b-4 border-cyan-600 pb-4 mb-6">
+                        <div>
+                            <h1 class="text-4xl font-bold text-cyan-800" style="font-family: 'Orbitron', sans-serif;">NEXO-ART</h1>
+                            <p class="text-xs tracking-[0.2em] text-slate-500 uppercase font-bold" style="font-family: 'Orbitron', sans-serif;">Motor Intelligence</p>
+                        </div>
+                        <div class="text-right">
+                            <h2 class="text-2xl font-bold text-slate-800 uppercase">${reportTitle}</h2>
+                            <p class="text-sm text-slate-500">Generado el: ${new Date().toLocaleDateString('es-ES')}</p>
+                        </div>
+                    </div>
+
+                    <!-- KPIs -->
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="bg-slate-50 p-4 rounded-lg border-l-4 border-emerald-500 border border-slate-200">
+                            <p class="text-[10px] text-slate-500 uppercase font-bold">Disponibilidad</p>
+                            <p class="text-3xl font-bold text-emerald-600" style="font-family: 'Orbitron', sans-serif;">${disp}</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg border-l-4 border-cyan-500 border border-slate-200">
+                            <p class="text-[10px] text-slate-500 uppercase font-bold">MTBF</p>
+                            <p class="text-3xl font-bold text-cyan-600" style="font-family: 'Orbitron', sans-serif;">${mtbf} h</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg border-l-4 border-purple-500 border border-slate-200">
+                            <p class="text-[10px] text-slate-500 uppercase font-bold">MTTR</p>
+                            <p class="text-3xl font-bold text-purple-600" style="font-family: 'Orbitron', sans-serif;">${mttr} h</p>
+                        </div>
+                    </div>
+
+                    <!-- METRICAS SINTETICAS -->
+                    <div class="mb-6">
+                        <h3 class="text-sm font-bold text-cyan-800 uppercase border-b border-slate-200 pb-1 mb-3">Métricas Sintéticas (Último Registro)</h3>
+                        <div class="grid grid-cols-4 gap-2 text-center">
+                            <div class="bg-slate-50 p-2 rounded border border-slate-200">
+                                <p class="text-[9px] text-slate-500 uppercase font-bold">Desgaste/KM</p>
+                                <p class="text-lg font-bold text-slate-700" style="font-family: 'Orbitron', sans-serif;">${syn.desgaste.toFixed(1)}</p>
+                            </div>
+                            <div class="bg-slate-50 p-2 rounded border border-slate-200">
+                                <p class="text-[9px] text-slate-500 uppercase font-bold">Eficiencia</p>
+                                <p class="text-lg font-bold text-slate-700" style="font-family: 'Orbitron', sans-serif;">${syn.eficiencia.toFixed(2)}</p>
+                            </div>
+                            <div class="bg-slate-50 p-2 rounded border border-slate-200">
+                                <p class="text-[9px] text-slate-500 uppercase font-bold">Estrés Mecánico</p>
+                                <p class="text-lg font-bold text-slate-700" style="font-family: 'Orbitron', sans-serif;">${syn.estres.toFixed(1)}</p>
+                            </div>
+                            <div class="bg-slate-50 p-2 rounded border border-slate-200">
+                                <p class="text-[9px] text-slate-500 uppercase font-bold">Disp. Operativa</p>
+                                <p class="text-lg font-bold text-slate-700" style="font-family: 'Orbitron', sans-serif;">${syn.dispOp.toFixed(1)}%</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- IA & VTV -->
+                    <div class="grid grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h3 class="text-sm font-bold text-cyan-800 uppercase border-b border-slate-200 pb-1 mb-3">Diagnóstico IA</h3>
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-[11px] text-slate-700 leading-relaxed">
+                                ${aiHtml}
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-cyan-800 uppercase border-b border-slate-200 pb-1 mb-3">Estado VTV: ${vtvPct} (${vtvStatus})</h3>
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-[11px] flex gap-4">
+                                <ul class="flex-1 list-none p-0 m-0 space-y-1 text-slate-600">
+                                    ${vtvChecks || '<li class="italic">Ningún ítem marcado</li>'}
+                                </ul>
+                                <ul class="flex-1 list-none p-0 m-0 space-y-1 text-slate-600">
+                                    ${vtvUnchecks}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABLA DATASET -->
+                    <div>
+                        <h3 class="text-sm font-bold text-cyan-800 uppercase border-b border-slate-200 pb-1 mb-2">Detalle de Registros Analizados</h3>
+                        ${tableHtml}
+                    </div>
+
+                    <!-- FOOTER -->
+                    <div class="mt-8 pt-4 border-t border-slate-200 text-center text-[10px] text-slate-400">
+                        NEXO-ART Motor Intelligence - Documento Confidencial Generado Automáticamente
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(pdfContainer);
+
             const opt = {
-                margin:       [10, 10, 10, 10],
-                filename:     `NEXO_ART_Report_${new Date().toISOString().split('T')[0]}.pdf`,
+                margin:       [5, 0, 5, 0],
+                filename:     `NEXO_ART_Reporte_${new Date().toISOString().split('T')[0]}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#0a0e1a' },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true, windowWidth: 800 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
             };
 
-            document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
-            
-            html2pdf().set(opt).from(element).save().then(() => {
-                document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
+            // FeedBack visual al presionar (Experiencia de usuario)
+            const btnPdf = document.querySelector('button[onclick="exportarPDF()"]');
+            const oldText = btnPdf.innerHTML;
+            btnPdf.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Generando...';
+
+            html2pdf().set(opt).from(pdfContainer).save().then(() => {
+                document.body.removeChild(pdfContainer);
+                btnPdf.innerHTML = oldText;
             });
         }
 
