@@ -127,6 +127,11 @@
             .glass-card { border: 1px solid #ccc; box-shadow: none; background: white; break-inside: avoid; }
             .text-cyan-400 { color: #0284c7 !important; }
         }
+
+        /* LLM Formatting */
+        .llm-response strong { color: #818cf8; }
+        .llm-response ul { padding-left: 1rem; margin-top: 0.5rem; }
+        .llm-response li { margin-bottom: 0.25rem; list-style-type: disc; }
     </style>
 </head>
 <body class="p-4 md:p-6" id="dashboard-body">
@@ -376,9 +381,14 @@
 
                 <!-- Recomendaciones IA -->
                 <div class="glass-card p-4 bg-indigo-900/20 border-indigo-500/30 flex flex-col">
-                    <h2 class="font-tech text-xs text-indigo-400 font-bold mb-2"><i class="fas fa-robot mr-2"></i>Recomendaciones IA</h2>
-                    <div id="ai-recommendations" class="text-[10px] space-y-2 text-slate-300 flex-grow custom-scrollbar overflow-y-auto max-h-[200px] pr-1">
-                        <p class="italic text-slate-500">Procesa datos para obtener análisis sintético y recomendaciones automáticas...</p>
+                    <div class="flex justify-between items-center mb-2 border-b border-indigo-500/20 pb-2">
+                        <h2 class="font-tech text-xs text-indigo-400 font-bold"><i class="fas fa-robot mr-2"></i>Recomendaciones IA</h2>
+                        <button onclick="llamarIA()" class="btn-neon px-2 py-1 rounded text-[9px] flex items-center gap-1 bg-indigo-900/40">
+                            ✨ Análisis IA
+                        </button>
+                    </div>
+                    <div id="ai-recommendations" class="text-[10px] space-y-2 text-slate-300 flex-grow custom-scrollbar overflow-y-auto max-h-[200px] pr-1 llm-response">
+                        <p class="italic text-slate-500">Selecciona o ingresa datos y haz clic en "Análisis IA" para obtener un diagnóstico avanzado...</p>
                     </div>
                 </div>
             </div>
@@ -408,6 +418,44 @@
 
     <!-- Funcionalidad JavaScript -->
     <script>
+        // ----------------------------------------------------
+        // API GEMINI CONFIG
+        // ----------------------------------------------------
+        const apiKey = ""; // La API key se provee dinámicamente en el entorno
+
+        // Fetch a Gemini con Exponential Backoff
+        async function fetchGemini(prompt, retries = 5) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { 
+                    parts: [{ 
+                        text: "Eres NEXO-ART IA, un ingeniero experto en mecánica automotriz, mantenimiento predictivo y análisis de datos de telemetría de flotas. Analiza la data entregada, identifica problemas raíz de forma profesional, señala riesgos predictivos y entrega 3 pasos clave a seguir. Responde en español de forma concisa. IMPORTANTE: Usa etiquetas HTML válidas y simples para formatear tu respuesta (como <strong>, <ul>, <li>, <br>) para que se renderice bien en un dashboard web." 
+                    }] 
+                }
+            };
+            
+            let delay = 1000;
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const res = await fetch(url, { 
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' }, 
+                        body: JSON.stringify(payload) 
+                    });
+                    
+                    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+                    
+                    const data = await res.json();
+                    return data.candidates[0].content.parts[0].text;
+                } catch (e) {
+                    if (i === retries - 1) throw e;
+                    await new Promise(r => setTimeout(r, delay));
+                    delay *= 2; // backoff
+                }
+            }
+        }
+
         // ----------------------------------------------------
         // ESTADO GLOBAL Y CONFIGURACIÓN MEMORIA
         // ----------------------------------------------------
@@ -710,7 +758,8 @@
                 calcMetricasAvanzadas(activeDb[activeDb.length-1]); 
                 calcEstadisticasDescribe(activeDb);
                 calcMatrizCorrelacion(activeDb);
-                generarRecomendacionesIA(activeDb);
+                // Volvemos a las recomendaciones basicas o limpiamos (el usuario solicitará la IA manualmente)
+                generarRecomendacionesLocales(activeDb);
             } else {
                 limpiarPanelesAvanzados();
             }
@@ -720,7 +769,7 @@
         function limpiarPanelesAvanzados() {
             document.getElementById('table-describe').innerHTML = '';
             document.getElementById('table-correlacion').innerHTML = '';
-            document.getElementById('ai-recommendations').innerHTML = '<p class="italic text-slate-500">Procesa datos para obtener análisis sintético y recomendaciones automáticas...</p>';
+            document.getElementById('ai-recommendations').innerHTML = '<p class="italic text-slate-500">Selecciona o ingresa datos y haz clic en "Análisis IA" para obtener un diagnóstico avanzado...</p>';
             initAdvCards();
         }
 
@@ -941,7 +990,7 @@
         // ----------------------------------------------------
         // INTELIGENCIA ARTIFICIAL Y LÓGICA DE NEGOCIO
         // ----------------------------------------------------
-        function generarRecomendacionesIA(activeDb) {
+        function generarRecomendacionesLocales(activeDb) {
             const container = document.getElementById('ai-recommendations');
             if(!activeDb || activeDb.length === 0) return;
             const last = activeDb[activeDb.length-1];
@@ -949,7 +998,7 @@
             const chks = document.querySelectorAll('.sensor-chk:checked');
             const sensoresFallando = Array.from(chks).map(c => c.value);
 
-            let html = '';
+            let html = '<p class="text-xs text-slate-400 mb-2 border-b border-slate-700/50 pb-1">Análisis Local Rápido:</p>';
             
             if(last.temp > 95) html += `<p class="border-l-2 border-rose-500 pl-2">⚠️ <span class="text-rose-400 font-bold">ALERTA TÉRMICA:</span> Temp ${last.temp.toFixed(1)}°C detectada en ${last.unidad}. Revisar termostato o refrigerante urgente.</p>`;
             else if(last.temp > 85) html += `<p class="border-l-2 border-amber-500 pl-2">🟡 <span class="text-amber-400">Atención Térmica:</span> Temp ${last.temp.toFixed(1)}°C. Monitorear.</p>`;
@@ -963,10 +1012,55 @@
             if(last.km > 150000) html += `<p class="border-l-2 border-purple-500 pl-2">⚙️ <span class="text-purple-400">Análisis KM:</span> Vehículo en cluster de +150k km. Revisar caja de cambios y compresión de cilindros preventivamente.</p>`;
             else if(last.km > 60000) html += `<p class="border-l-2 border-blue-500 pl-2">⚙️ <span class="text-blue-400">Análisis KM:</span> Vehículo en cluster medio. Verificar embrague y distribución.</p>`;
 
-            if(html === '') html = `<p class="text-emerald-400"><i class="fas fa-check-circle mr-1"></i> Parámetros estables. Operación óptima sugerida.</p>`;
+            if(html === '<p class="text-xs text-slate-400 mb-2 border-b border-slate-700/50 pb-1">Análisis Local Rápido:</p>') {
+                html += `<p class="text-emerald-400"><i class="fas fa-check-circle mr-1"></i> Parámetros estables detectados localmente.</p>`;
+            }
 
             container.innerHTML = html;
         }
+
+        // --- GEMINI LLM INTEGRATION ---
+        async function llamarIA() {
+            const activeDb = selectedRows.size > 0 ? db.filter((_, i) => selectedRows.has(i)) : obtenerDbFiltrada();
+            if(activeDb.length === 0) return alert("No hay datos en el panel actual para ser analizados por la IA.");
+            
+            const container = document.getElementById('ai-recommendations');
+            container.innerHTML = '<p class="italic text-indigo-400"><i class="fas fa-spinner fa-spin mr-2"></i> ✨ Gemini está procesando la telemetría para un diagnóstico avanzado...</p>';
+            
+            const last = activeDb[activeDb.length-1];
+            const syn = getSynthetic(last);
+            
+            // Reconstruimos el string de sensores activos
+            const chks = document.querySelectorAll('.sensor-chk:checked');
+            const sensoresFallando = Array.from(chks).map(c => c.value).join(', ');
+
+            // VTV info
+            const vtvStatus = document.getElementById('vtv-status-text').innerText;
+            const vtvPct = document.getElementById('vtv-pct').innerText;
+
+            const prompt = `Analiza los siguientes datos del vehículo ${last.unidad} (ID: ${last.id}):
+            - Telemetría: Motor ${last.motor}, KM: ${last.km.toLocaleString()}, Temperatura ${last.temp}°C, Vibración ${last.vib} mm/s, RPM ${last.rpm}.
+            - Presiones (PSI): DI ${last.psi_di}, DD ${last.psi_dd}, TI ${last.psi_ti}, TD ${last.psi_td}.
+            - Uso: Uptime ${last.up}h, Downtime ${last.down}h.
+            - Métricas Sintéticas Calculadas: Desgaste/KM ${syn.desgaste.toFixed(2)}, Eficiencia ${syn.eficiencia.toFixed(2)}, Estrés Mecánico ${syn.estres.toFixed(2)}.
+            - Sensores/Alarmas manuales activadas: ${sensoresFallando || 'Ninguna'}.
+            - Preparación Inspección VTV: ${vtvPct} (${vtvStatus}).
+            - Notas/Trabajo Previo: ${last.trabajo || 'Ninguno'}
+            
+            Basándote estrictamente en esto, genera una evaluación predictiva para taller mecánico que incluya: 
+            1) Identificación de cualquier anomalía urgente (cruza temperatura, vibración, rpm y alertas manuales). 
+            2) Consecuencias a corto plazo si no se atiende. 
+            3) Los 3 próximos pasos de mantenimiento recomendados.`;
+            
+            try {
+                const responseText = await fetchGemini(prompt);
+                container.innerHTML = `<div class="bg-indigo-950/40 p-3 rounded border border-indigo-500/50 llm-response">${responseText}</div>`;
+            } catch (err) {
+                container.innerHTML = `<p class="text-rose-400"><i class="fas fa-exclamation-triangle"></i> Error al contactar con Gemini AI. Intenta de nuevo más tarde o verifica la consola para detalles.</p>`;
+                setTimeout(() => generarRecomendacionesLocales(activeDb), 3500);
+            }
+        }
+
 
         // ----------------------------------------------------
         // TABLAS Y GRÁFICOS UI
@@ -1396,7 +1490,6 @@
     </script>
 </body>
 </html>
-
 
 
 
