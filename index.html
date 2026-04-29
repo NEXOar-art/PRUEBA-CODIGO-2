@@ -421,7 +421,7 @@
         // ----------------------------------------------------
         // API GEMINI CONFIG
         // ----------------------------------------------------
-        const apiKey = ""; // La API key se provee dinámicamente en el entorno
+        const apiKey = "AIzaSyA8kGRYruC6JvfaRCaj0oAn5BM5inhlHPM"; // Clave proporcionada
 
         // Fetch a Gemini con Exponential Backoff
         async function fetchGemini(prompt, retries = 5) {
@@ -1030,11 +1030,9 @@
             const last = activeDb[activeDb.length-1];
             const syn = getSynthetic(last);
             
-            // Reconstruimos el string de sensores activos
             const chks = document.querySelectorAll('.sensor-chk:checked');
             const sensoresFallando = Array.from(chks).map(c => c.value).join(', ');
 
-            // VTV info
             const vtvStatus = document.getElementById('vtv-status-text').innerText;
             const vtvPct = document.getElementById('vtv-pct').innerText;
 
@@ -1241,7 +1239,6 @@
             const activeDb = selectedRows.size > 0 ? db.filter((_, i) => selectedRows.has(i)) : obtenerDbFiltrada();
             if(activeDb.length === 0) return alert("No hay datos para exportar.");
 
-            // Recopilar datos clave
             const last = activeDb[activeDb.length-1];
             const syn = getSynthetic(last);
             
@@ -1259,7 +1256,6 @@
             const uniqueUnits = [...new Set(activeDb.map(r => r.unidad))];
             const reportTitle = uniqueUnits.length === 1 ? `REPORTE TÉCNICO: ${uniqueUnits[0]}` : `REPORTE DE FLOTA (${uniqueUnits.length} Unidades)`;
 
-            // Construir Tabla Completa
             let tableHtml = `
                 <table class="w-full text-left text-[10px] border-collapse mt-4">
                     <thead>
@@ -1295,7 +1291,6 @@
             });
             tableHtml += `</tbody></table>`;
 
-            // Plantilla PDF Persuasiva (A4 - Estilo Consultoría)
             const pdfContainer = document.createElement('div');
             pdfContainer.id = "temp-pdf-export";
             pdfContainer.className = "bg-white text-slate-800 font-sans";
@@ -1412,7 +1407,6 @@
                 pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
             };
 
-            // FeedBack visual al presionar (Experiencia de usuario)
             const btnPdf = document.querySelector('button[onclick="exportarPDF()"]');
             const oldText = btnPdf.innerHTML;
             btnPdf.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Generando...';
