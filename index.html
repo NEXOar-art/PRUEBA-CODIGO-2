@@ -904,7 +904,7 @@
             box-shadow: 0 15px 40px rgba(67, 160, 71, 0.65);
         }
 
-        /* Location Section with Glassmorphism - MODIFIED: MAP REMOVED */
+        /* Location Section - MODIFIED: Clean Contact Info with Micro-Effects */
         .location-section {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(25px);
@@ -928,6 +928,7 @@
             width: 100%;
             max-width: 900px;
             margin: 0 auto;
+            text-align: center;
         }
 
         .location-info h3 {
@@ -946,66 +947,119 @@
             color: var(--gold);
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            max-width: 900px;
-            margin: 0 auto;
-            justify-items: center;
-        }
-
-        .info-item {
+        /* Clean Contact Items - No Cards, Just Icons + Text with Micro-Effects */
+        .contact-list {
             display: flex;
-            align-items: flex-start;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: 18px;
-            padding: 25px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            transition: all 0.3s ease;
-            border: 2px solid rgba(255,255,255,0.25);
+            padding: 15px 25px;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
-            text-align: left;
-            width: 100%;
-            max-width: 350px;
+            text-align: center;
+            background: transparent;
         }
 
-        .info-item:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-5px);
-            border-color: rgba(255, 167, 38, 0.5);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-        }
-
-        .info-item i {
+        .contact-item i {
             font-size: 1.8rem;
             color: var(--gold);
-            margin-top: 3px;
-            min-width: 30px;
+            min-width: 35px;
+            transition: all 0.3s ease;
+            text-shadow: 0 2px 8px rgba(255, 167, 38, 0.4);
         }
 
-        .info-item div strong {
+        .contact-item .contact-text strong {
             color: white;
             display: block;
-            margin-bottom: 8px;
-            font-size: 1.1rem;
+            margin-bottom: 4px;
+            font-size: 1.05rem;
             font-weight: 700;
+            transition: color 0.3s ease;
         }
 
-        .info-item div p, .info-item div a {
+        .contact-item .contact-text p, 
+        .contact-item .contact-text a {
             color: rgba(255, 255, 255, 0.95);
             text-decoration: none;
-            line-height: 1.7;
+            line-height: 1.6;
             transition: color 0.3s ease;
-            font-size: 1rem;
+            font-size: 0.98rem;
+            margin: 0;
         }
 
-        .info-item div a:hover {
+        .contact-item .contact-text a:hover {
             color: var(--gold);
         }
 
-        /* Enhanced Footer with Glass - MODIFIED: Added Location Button */
+        /* Micro-Effects on Hover */
+        .contact-item:hover {
+            transform: translateX(8px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .contact-item:hover i {
+            transform: scale(1.25) rotate(8deg);
+            color: var(--accent);
+            text-shadow: 0 4px 15px rgba(66, 165, 245, 0.6);
+        }
+
+        .contact-item:hover .contact-text strong {
+            color: var(--gold);
+        }
+
+        /* Special effect for location item */
+        .contact-item.location-item:hover {
+            transform: translateX(12px) scale(1.02);
+            background: rgba(255, 167, 38, 0.15);
+        }
+
+        .contact-item.location-item:hover i {
+            animation: bounceIcon 0.6s ease;
+        }
+
+        @keyframes bounceIcon {
+            0%, 100% { transform: scale(1.25) rotate(8deg); }
+            50% { transform: scale(1.4) rotate(15deg) translateY(-3px); }
+        }
+
+        /* Subtle pulse animation for icons */
+        .contact-item i {
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        .contact-item:nth-child(2) i { animation-delay: 0.5s; }
+        .contact-item:nth-child(3) i { animation-delay: 1s; }
+        .contact-item:nth-child(4) i { animation-delay: 1.5s; }
+        .contact-item:nth-child(5) i { animation-delay: 2s; }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        /* Responsive adjustments for contact items */
+        @media (max-width: 768px) {
+            .contact-item {
+                padding: 12px 20px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .contact-item:hover {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Enhanced Footer with Glass - Added Location Button */
         .footer {
             background: rgba(38, 50, 56, 0.9);
             backdrop-filter: blur(15px);
@@ -1237,10 +1291,6 @@
                 gap: 20px;
             }
 
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-
             .footer {
                 padding: 30px 15px;
             }
@@ -1299,10 +1349,6 @@
                 font-size: 1.2rem;
             }
 
-            .info-item {
-                padding: 20px 15px;
-            }
-            
             .footer-social a {
                 width: 45px;
                 height: 45px;
@@ -1717,7 +1763,7 @@
             </form>
         </section>
 
-        <!-- Location Section - MAP REMOVED, CARDS CENTERED -->
+        <!-- Location Section - CLEAN CONTACT INFO WITH MICRO-EFFECTS -->
         <section class="location-section">
             <h2 class="section-title">
                 <i class="fas fa-map-marker-alt"></i> ¿Dónde Estamos?
@@ -1727,62 +1773,57 @@
             </p>
             
             <div class="location-content">
-                <!-- Contact Information - Centered Cards Only -->
+                <!-- Clean Contact Information - Centered, No Cards -->
                 <div class="location-info">
                     <h3><i class="fas fa-address-card"></i> Información de Contacto</h3>
                     
-                    <div class="info-grid">
-                        <!-- Clickable Location Icon -->
-                        <a href="https://maps.app.goo.gl/p2ZgDAyxmsyaT2yaA" target="_blank" style="text-decoration: none;">
-                            <div class="info-item">
+                    <div class="contact-list">
+                        <!-- Location -->
+                        <a href="https://maps.app.goo.gl/p2ZgDAyxmsyaT2yaA" target="_blank" style="text-decoration: none; width: 100%;">
+                            <div class="contact-item location-item">
                                 <i class="fas fa-map-marked-alt"></i>
-                                <div>
+                                <div class="contact-text">
                                     <strong>Dirección</strong>
                                     <p>km 2, Juan Domingo Perón<br>T4178 Alderetes, Tucumán</p>
                                 </div>
                             </div>
                         </a>
 
-                        <!-- Clickable WhatsApp Icon -->
-                        <a href="https://wa.me/543815132059" target="_blank" style="text-decoration: none;">
-                            <div class="info-item">
+                        <!-- WhatsApp -->
+                        <a href="https://wa.me/543815132059" target="_blank" style="text-decoration: none; width: 100%;">
+                            <div class="contact-item">
                                 <i class="fab fa-whatsapp"></i>
-                                <div>
+                                <div class="contact-text">
                                     <strong>WhatsApp</strong>
                                     <p>+54 3815-132059</p>
                                 </div>
                             </div>
                         </a>
 
-                        <!-- Clickable Instagram Icon -->
-                        <a href="https://www.instagram.com/taller.freddy/" target="_blank" style="text-decoration: none;">
-                            <div class="info-item">
+                        <!-- Instagram -->
+                        <a href="https://www.instagram.com/taller.freddy/" target="_blank" style="text-decoration: none; width: 100%;">
+                            <div class="contact-item">
                                 <i class="fab fa-instagram"></i>
-                                <div>
+                                <div class="contact-text">
                                     <strong>Instagram</strong>
                                     <p>@taller.freddy</p>
                                 </div>
                             </div>
                         </a>
 
-                        <div class="info-item">
+                        <!-- Hours -->
+                        <div class="contact-item">
                             <i class="fas fa-clock"></i>
-                            <div>
+                            <div class="contact-text">
                                 <strong>Horarios de Atención</strong>
-                                <p>
-                                    <i class="fas fa-calendar-week" style="margin-right: 5px;"></i>
-                                    Lunes a Viernes: 08:00 - 17:00<br>
-                                    <i class="fas fa-calendar-day" style="margin-right: 5px;"></i>
-                                    Sábados y Domingos: Cerrado<br>
-                                    <i class="fas fa-holiday" style="margin-right: 5px;"></i>
-                                    Feriados: Consultar por WhatsApp
-                                </p>
+                                <p>Lunes a Viernes: 08:00 - 17:00<br>Sábados y Domingos: Cerrado</p>
                             </div>
                         </div>
 
-                        <div class="info-item">
+                        <!-- Services -->
+                        <div class="contact-item">
                             <i class="fas fa-tools"></i>
-                            <div>
+                            <div class="contact-text">
                                 <strong>Servicios</strong>
                                 <p>Chapa y pintura, reparaciones estructurales, paragolpes, sacabollos, polarizados y más.</p>
                             </div>
@@ -1909,7 +1950,7 @@
         }, observerOptions);
 
         // Observe all cards and sections
-        document.querySelectorAll('.testimonial-card, .form-section, .location-section, .service-card').forEach(el => {
+        document.querySelectorAll('.testimonial-card, .form-section, .location-section, .service-card, .contact-item').forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(30px)';
             el.style.transition = 'all 0.6s ease';
