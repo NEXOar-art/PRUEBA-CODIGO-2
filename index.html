@@ -50,7 +50,7 @@
             -ms-text-size-adjust: 100%;
         }
 
-        /* Animated Top Banner - Optimizado para móviles */
+        /* Animated Top Banner - OPTIMIZADO PARA MOVIMIENTO INFINITO SIN SUPERPOSICIÓN */
         .top-banner {
             background: linear-gradient(90deg, #0d47a1 0%, #1565c0 50%, #0d47a1 100%);
             padding: 15px 0;
@@ -78,22 +78,24 @@
 
         .banner-content {
             display: flex;
-            animation: bannerScroll 30s linear infinite;
+            animation: bannerScroll 45s linear infinite;
             white-space: nowrap;
             width: max-content;
+            will-change: transform;
         }
 
         .banner-item {
             display: inline-flex;
             align-items: center;
-            padding: 0 25px;
+            padding: 0 40px;
             flex-shrink: 0;
+            gap: 15px;
         }
 
         .banner-icon {
             font-size: 1.5rem;
-            margin-right: 12px;
             animation: iconPulse 2s ease-in-out infinite;
+            flex-shrink: 0;
         }
 
         @keyframes iconPulse {
@@ -104,7 +106,8 @@
         .banner-text {
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 4px;
+            min-width: 260px;
         }
 
         .banner-title {
@@ -112,20 +115,22 @@
             font-weight: 700;
             color: var(--gold);
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            line-height: 1.2;
         }
 
         .banner-description {
             font-size: 0.85rem;
             color: rgba(255,255,255,0.95);
             font-weight: 500;
-            max-width: 280px;
+            line-height: 1.4;
         }
 
         .banner-divider {
             color: var(--gold);
             font-size: 1.2rem;
-            margin: 0 15px;
+            margin: 0 20px;
             animation: dividerPulse 1.5s ease-in-out infinite;
+            flex-shrink: 0;
         }
 
         @keyframes dividerPulse {
@@ -288,7 +293,7 @@
             margin: 0 5px;
         }
 
-        /* Services Section */
+        /* Services Section - TARJETAS CENTRADAS */
         .services-section {
             padding: 50px 15px;
             max-width: 1200px;
@@ -320,6 +325,8 @@
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 20px;
             justify-items: center;
+            place-items: center;
+            width: 100%;
         }
 
         .service-card {
@@ -910,7 +917,7 @@
             box-shadow: 0 15px 40px rgba(67, 160, 71, 0.65);
         }
 
-        /* Location Section - SIN MAPA - Cards centradas y ordenadas */
+        /* Location Section - TARJETAS PERFECTAMENTE ALINEADAS SIN ESPACIOS VACÍOS */
         .location-section {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(25px);
@@ -933,7 +940,10 @@
 
         .location-info {
             width: 100%;
-            max-width: 800px;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .location-info h3 {
@@ -956,7 +966,9 @@
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 15px;
             width: 100%;
-            justify-items: center;
+            justify-content: center;
+            place-items: center;
+            margin: 0 auto;
         }
 
         .info-item {
@@ -973,6 +985,7 @@
             text-align: left;
             width: 100%;
             max-width: 320px;
+            margin: 0;
         }
 
         .info-item:hover {
@@ -1192,7 +1205,7 @@
             html { font-size: 14px; }
             
             .top-banner { padding: 12px 0; }
-            .banner-item { padding: 0 20px; }
+            .banner-item { padding: 0 25px; }
             .banner-title { font-size: 0.95rem; }
             .banner-description { font-size: 0.8rem; max-width: 240px; }
             
@@ -1281,7 +1294,7 @@
             html { font-size: 13px; }
             
             .top-banner { padding: 10px 0; }
-            .banner-item { padding: 0 15px; }
+            .banner-item { padding: 0 20px; }
             .banner-icon { font-size: 1.3rem; margin-right: 10px; }
             .banner-title { font-size: 0.9rem; }
             .banner-description { 
@@ -1609,7 +1622,7 @@
         </div>
     </div>
 
-    <!-- Animated Top Banner -->
+    <!-- Animated Top Banner - OPTIMIZADO -->
     <div class="top-banner">
         <div class="banner-content">
             <!-- First Message - Duplicate for seamless loop -->
@@ -1691,7 +1704,7 @@
         </div>
     </header>
 
-    <!-- Services Section -->
+    <!-- Services Section - TARJETAS CENTRADAS -->
     <section class="services-section">
         <h2 class="services-title">NUESTROS SERVICIOS</h2>
         <div class="services-grid">
@@ -1944,7 +1957,7 @@
             </form>
         </section>
 
-        <!-- Location Section - SIN MAPA - Cards centradas y ordenadas -->
+        <!-- Location Section - TARJETAS PERFECTAMENTE ALINEADAS SIN ESPACIOS VACÍOS -->
         <section class="location-section">
             <h2 class="section-title">
                 <i class="fas fa-map-marker-alt" aria-hidden="true"></i> ¿Dónde Estamos?
@@ -1954,7 +1967,7 @@
             </p>
             
             <div class="location-content">
-                <!-- Contact Information - Cards centradas -->
+                <!-- Contact Information - Cards centradas y sin espacios vacíos -->
                 <div class="location-info">
                     <h3><i class="fas fa-address-card" aria-hidden="true"></i> Información de Contacto</h3>
                     
