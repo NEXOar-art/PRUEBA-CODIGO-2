@@ -47,11 +47,10 @@
             line-height: 1.6;
         }
 
-        /* Animated Top Banner - 4 MESSAGES WITH SEAMLESS LOOP */
+        /* Animated Top Banner - JS CONTROLLED CAROUSEL */
         .top-banner {
             background: linear-gradient(90deg, #0d47a1 0%, #1565c0 50%, #0d47a1 100%);
             padding: 20px 0;
-            overflow: hidden;
             position: relative;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             border-bottom: 3px solid var(--gold);
@@ -73,32 +72,39 @@
             50% { transform: translateX(100%); }
         }
 
-        .banner-wrapper {
+        .banner-viewport {
             position: relative;
             width: 100%;
             overflow: hidden;
+            height: 100px;
         }
 
-        .banner-content {
+        .banner-track {
             display: flex;
-            width: max-content;
-            animation: bannerScroll 32s ease-in-out infinite;
+            align-items: center;
+            transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
         }
 
-        .banner-item {
+        .banner-slide {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0 40px;
             flex-shrink: 0;
             text-align: center;
-            width: 85vw;
-            max-width: 700px;
+            padding: 0 20px;
+            min-width: 100%;
+        }
+
+        .banner-slide-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
         }
 
         .banner-icon {
-            font-size: 2rem;
-            margin-right: 20px;
+            font-size: 2.2rem;
             animation: iconPulse 2s ease-in-out infinite;
             display: inline-block;
             flex-shrink: 0;
@@ -112,9 +118,8 @@
         .banner-text {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
             text-align: center;
-            align-items: center;
         }
 
         .banner-title {
@@ -122,42 +127,17 @@
             font-weight: 800;
             color: var(--gold);
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            text-align: center;
         }
 
         .banner-description {
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: rgba(255,255,255,0.95);
             font-weight: 500;
-            text-align: center;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
-        .banner-divider {
-            color: var(--gold);
-            font-size: 1.5rem;
-            margin: 0 30px;
-            animation: dividerPulse 1.5s ease-in-out infinite;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        @keyframes dividerPulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
-        }
-
-        /* Banner Keyframes - 4 messages + 1 duplicate for seamless loop */
-        @keyframes bannerScroll {
-            0%, 18% { transform: translateX(0); }
-            22%, 40% { transform: translateX(calc(-1 * (85vw + 80px))); }
-            44%, 62% { transform: translateX(calc(-2 * (85vw + 80px))); }
-            66%, 84% { transform: translateX(calc(-3 * (85vw + 80px))); }
-            88%, 100% { transform: translateX(calc(-4 * (85vw + 80px))); }
-        }
-
-        .top-banner:hover .banner-content {
-            animation-play-state: paused;
+        .top-banner:hover .banner-track {
+            transition: none;
         }
 
         /* Responsive Banner */
@@ -166,73 +146,59 @@
                 padding: 15px 0;
             }
 
-            .banner-item {
-                width: 90vw;
-                max-width: 90vw;
-                padding: 0 15px;
+            .banner-viewport {
+                height: auto;
+                min-height: 90px;
+            }
+
+            .banner-slide {
+                padding: 8px 15px;
+            }
+
+            .banner-slide-content {
                 flex-direction: column;
-                gap: 10px;
+                gap: 8px;
+                align-items: center;
             }
 
             .banner-icon {
                 font-size: 1.8rem;
-                margin-right: 0;
-                margin-bottom: 8px;
+                margin-bottom: 2px;
             }
 
             .banner-title {
-                font-size: 1.1rem;
+                font-size: 1.05rem;
             }
 
             .banner-description {
-                font-size: 0.85rem;
-                line-height: 1.5;
-            }
-
-            .banner-divider {
-                font-size: 1.2rem;
-                margin: 0 15px;
-            }
-
-            @keyframes bannerScroll {
-                0%, 18% { transform: translateX(0); }
-                22%, 40% { transform: translateX(calc(-1 * (90vw + 60px))); }
-                44%, 62% { transform: translateX(calc(-2 * (90vw + 60px))); }
-                66%, 84% { transform: translateX(calc(-3 * (90vw + 60px))); }
-                88%, 100% { transform: translateX(calc(-4 * (90vw + 60px))); }
+                font-size: 0.82rem;
+                line-height: 1.4;
             }
         }
 
         @media (max-width: 480px) {
-            .banner-item {
-                width: 95vw;
-                max-width: 95vw;
-                padding: 0 10px;
+            .banner-viewport {
+                min-height: 80px;
+            }
+
+            .banner-slide {
+                padding: 5px 12px;
+            }
+
+            .banner-icon {
+                font-size: 1.6rem;
             }
 
             .banner-title {
-                font-size: 1rem;
+                font-size: 0.95rem;
             }
 
             .banner-description {
-                font-size: 0.8rem;
-            }
-
-            .banner-divider {
-                font-size: 1rem;
-                margin: 0 10px;
-            }
-
-            @keyframes bannerScroll {
-                0%, 18% { transform: translateX(0); }
-                22%, 40% { transform: translateX(calc(-1 * (95vw + 50px))); }
-                44%, 62% { transform: translateX(calc(-2 * (95vw + 50px))); }
-                66%, 84% { transform: translateX(calc(-3 * (95vw + 50px))); }
-                88%, 100% { transform: translateX(calc(-4 * (95vw + 50px))); }
+                font-size: 0.75rem;
             }
         }
 
-        /* High-Quality Workshop Background Image - FULLY VISIBLE */
+        /* High-Quality Workshop Background Image */
         .bg-image {
             position: fixed;
             top: 0;
@@ -251,7 +217,6 @@
             to { transform: scale(1.1); }
         }
 
-        /* Fade-out overlay - degrades to transparent */
         .bg-overlay {
             position: fixed;
             top: 0;
@@ -377,7 +342,7 @@
             margin: 0 5px;
         }
 
-        /* Services Section - 3x2 GRID LAYOUT */
+        /* Services Section */
         .services-section {
             padding: 80px 20px;
             max-width: 1200px;
@@ -477,7 +442,7 @@
             line-height: 1.6;
         }
 
-        /* Status Indicator - Professional with Glass */
+        /* Status Indicator */
         .status-container {
             display: flex;
             justify-content: center;
@@ -533,7 +498,7 @@
             50% { opacity: 0.8; transform: scale(1.1); box-shadow: 0 0 0 10px rgba(255,255,255,0); }
         }
 
-        /* Enhanced CTA Buttons Section with Glass */
+        /* CTA Buttons */
         .cta-section {
             padding: 50px 20px;
             display: flex;
@@ -616,7 +581,7 @@
             color: white;
         }
 
-        /* Circular Floating 24/7 Emergency Button - ADAPTABLE */
+        /* Circular Floating 24/7 Emergency Button */
         .floating-assistance {
             position: fixed;
             top: 50%;
@@ -663,12 +628,8 @@
         }
 
         @keyframes emergencyGlow {
-            0%, 100% { 
-                filter: brightness(1);
-            }
-            50% { 
-                filter: brightness(1.3);
-            }
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
         }
 
         .assistance-button::before {
@@ -752,7 +713,7 @@
             padding: 60px 20px;
         }
 
-        /* Testimonials Section with Glassmorphism */
+        /* Testimonials Section */
         .testimonials-section {
             margin-bottom: 80px;
         }
@@ -897,7 +858,7 @@
             width: 100%;
         }
 
-        /* Form Section with Glassmorphism - IMPROVED RESPONSIVE */
+        /* Form Section */
         .form-section {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(25px);
@@ -1006,7 +967,7 @@
             box-shadow: 0 15px 40px rgba(67, 160, 71, 0.65);
         }
 
-        /* Location Section - Clean Contact Info with Micro-Effects */
+        /* Location Section */
         .location-section {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(25px);
@@ -1145,7 +1106,7 @@
             50% { transform: translateY(-4px); }
         }
 
-        /* Enhanced Footer with Glass */
+        /* Footer */
         .footer {
             background: rgba(38, 50, 56, 0.9);
             backdrop-filter: blur(15px);
@@ -1232,25 +1193,13 @@
 
         /* Animations */
         @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeIn {
@@ -1258,7 +1207,7 @@
             to { opacity: 1; }
         }
 
-        /* Responsive Design - ENHANCED FOR ALL SCREEN SIZES */
+        /* Responsive Design */
         @media (max-width: 1024px) {
             .services-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -1594,60 +1543,51 @@
         </div>
     </div>
 
-    <!-- Animated Top Banner - 4 MESSAGES WITH SEAMLESS LOOP -->
+    <!-- Animated Top Banner - JS CONTROLLED PERFECT CENTERING -->
     <div class="top-banner">
-        <div class="banner-wrapper">
-            <div class="banner-content">
-                <!-- Message 1: Granizo -->
-                <div class="banner-item">
-                    <span class="banner-icon">🌩️</span>
-                    <div class="banner-text">
-                        <div class="banner-title">Granizo daña tu auto</div>
-                        <div class="banner-description">⚠️ Si no lo reparás rápido → aparece óxido, baja el valor y el arreglo se vuelve más caro. 🔧 Traelo hoy mismo a nuestro taller y mantené tu vehículo impecable</div>
+        <div class="banner-viewport" id="bannerViewport">
+            <div class="banner-track" id="bannerTrack">
+                <!-- Slide 1: Granizo -->
+                <div class="banner-slide">
+                    <div class="banner-slide-content">
+                        <span class="banner-icon">🌩️</span>
+                        <div class="banner-text">
+                            <div class="banner-title">Granizo daña tu auto</div>
+                            <div class="banner-description">⚠️ Si no lo reparás rápido → aparece óxido, baja el valor y el arreglo se vuelve más caro. 🔧 Traelo hoy mismo a nuestro taller y mantené tu vehículo impecable</div>
+                        </div>
                     </div>
                 </div>
                 
-                <span class="banner-divider">❙❙</span>
-                
-                <!-- Message 2: Choque -->
-                <div class="banner-item">
-                    <span class="banner-icon">🚘</span>
-                    <div class="banner-text">
-                        <div class="banner-title">¿Tuviste un choque?</div>
-                        <div class="banner-description">⚠️ No esperes: los daños pueden empeorar y aumentar los costos. 🔧 Conectate con nosotros y devolvéle a tu auto seguridad y estética</div>
+                <!-- Slide 2: Choque -->
+                <div class="banner-slide">
+                    <div class="banner-slide-content">
+                        <span class="banner-icon">🚘</span>
+                        <div class="banner-text">
+                            <div class="banner-title">¿Tuviste un choque?</div>
+                            <div class="banner-description">⚠️ No esperes: los daños pueden empeorar y aumentar los costos. 🔧 Conectate con nosotros y devolvéle a tu auto seguridad y estética</div>
+                        </div>
                     </div>
                 </div>
                 
-                <span class="banner-divider">❙❙</span>
-                
-                <!-- Message 3: Centro de Reparaciones Freddy -->
-                <div class="banner-item">
-                    <span class="banner-icon">🏆</span>
-                    <div class="banner-text">
-                        <div class="banner-title">Centro de Reparaciones Freddy</div>
-                        <div class="banner-description">⭐ Excelencia y Calidad en Chapa y Pintura Profesional desde 2010. Tu taller de confianza en Tucumán 🔧🚗</div>
+                <!-- Slide 3: Centro de Reparaciones Freddy -->
+                <div class="banner-slide">
+                    <div class="banner-slide-content">
+                        <span class="banner-icon">🏆</span>
+                        <div class="banner-text">
+                            <div class="banner-title">Centro de Reparaciones Freddy</div>
+                            <div class="banner-description">⭐ Excelencia y Calidad en Chapa y Pintura Profesional desde 2010. Tu taller de confianza en Tucumán 🔧🚗</div>
+                        </div>
                     </div>
                 </div>
                 
-                <span class="banner-divider">❙❙</span>
-                
-                <!-- Message 4: Horario de Atención -->
-                <div class="banner-item">
-                    <span class="banner-icon">⏰</span>
-                    <div class="banner-text">
-                        <div class="banner-title">Horario de Atención</div>
-                        <div class="banner-description">📅 Lunes a Viernes: 08:00 a 17:00 HS. 📍 Km 2, Juan Domingo Perón, Alderetes, Tucumán. ¡Te esperamos!</div>
-                    </div>
-                </div>
-                
-                <span class="banner-divider">❙❙</span>
-                
-                <!-- Duplicate of Message 1 for seamless loop -->
-                <div class="banner-item">
-                    <span class="banner-icon">🌩️</span>
-                    <div class="banner-text">
-                        <div class="banner-title">Granizo daña tu auto</div>
-                        <div class="banner-description">⚠️ Si no lo reparás rápido → aparece óxido, baja el valor y el arreglo se vuelve más caro. 🔧 Traelo hoy mismo a nuestro taller y mantené tu vehículo impecable</div>
+                <!-- Slide 4: Horario de Atención -->
+                <div class="banner-slide">
+                    <div class="banner-slide-content">
+                        <span class="banner-icon">⏰</span>
+                        <div class="banner-text">
+                            <div class="banner-title">Horario de Atención</div>
+                            <div class="banner-description">📅 Lunes a Viernes: 08:00 a 17:00 HS. 📍 Km 2, Juan Domingo Perón, Alderetes, Tucumán. ¡Te esperamos!</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1691,7 +1631,7 @@
         </div>
     </header>
 
-    <!-- Services Section - 3x2 GRID LAYOUT -->
+    <!-- Services Section -->
     <section class="services-section">
         <h2 class="services-title">NUESTROS SERVICIOS</h2>
         <div class="services-grid">
@@ -1733,7 +1673,7 @@
         </div>
     </section>
 
-    <!-- Circular Floating 24/7 Emergency Button - ADAPTABLE -->
+    <!-- Circular Floating 24/7 Emergency Button -->
     <div class="floating-assistance">
         <a href="#" onclick="sendAssistanceMessage(); return false;" class="assistance-button">
             <span class="emergency-badge">24/7</span>
@@ -1770,7 +1710,6 @@
             </h2>
             
             <div class="testimonials-grid">
-                <!-- Testimonial 1 -->
                 <div class="testimonial-card">
                     <div class="testimonial-header">
                         <div class="testimonial-avatar">MR</div>
@@ -1793,7 +1732,6 @@
                     </span>
                 </div>
 
-                <!-- Testimonial 2 -->
                 <div class="testimonial-card">
                     <div class="testimonial-header">
                         <div class="testimonial-avatar">CG</div>
@@ -1816,7 +1754,6 @@
                     </span>
                 </div>
 
-                <!-- Testimonial 3 -->
                 <div class="testimonial-card">
                     <div class="testimonial-header">
                         <div class="testimonial-avatar">LP</div>
@@ -1841,7 +1778,7 @@
             </div>
         </section>
 
-        <!-- Appointment Form Section - CENTERED & RESPONSIVE -->
+        <!-- Appointment Form Section -->
         <section id="formulario" class="form-section">
             <h2 class="section-title">
                 <i class="fas fa-calendar-alt"></i> Solicitar Turno
@@ -1944,7 +1881,7 @@
             </form>
         </section>
 
-        <!-- Location Section - CLEAN CONTACT INFO WITH MICRO-EFFECTS -->
+        <!-- Location Section -->
         <section class="location-section">
             <h2 class="section-title">
                 <i class="fas fa-map-marker-alt"></i> ¿Dónde Estamos?
@@ -1954,12 +1891,10 @@
             </p>
             
             <div class="location-content">
-                <!-- Clean Contact Information - Centered, No Cards -->
                 <div class="location-info">
                     <h3><i class="fas fa-address-card"></i> Información de Contacto</h3>
                     
                     <div class="contact-list">
-                        <!-- Location -->
                         <a href="https://maps.app.goo.gl/p2ZgDAyxmsyaT2yaA" target="_blank" style="text-decoration: none; width: 100%;">
                             <div class="contact-item location-item">
                                 <i class="fas fa-map-marked-alt"></i>
@@ -1970,7 +1905,6 @@
                             </div>
                         </a>
 
-                        <!-- WhatsApp -->
                         <a href="https://wa.me/543815132059" target="_blank" style="text-decoration: none; width: 100%;">
                             <div class="contact-item">
                                 <i class="fab fa-whatsapp"></i>
@@ -1981,7 +1915,6 @@
                             </div>
                         </a>
 
-                        <!-- Instagram -->
                         <a href="https://www.instagram.com/taller.freddy/" target="_blank" style="text-decoration: none; width: 100%;">
                             <div class="contact-item">
                                 <i class="fab fa-instagram"></i>
@@ -1992,7 +1925,6 @@
                             </div>
                         </a>
 
-                        <!-- Hours -->
                         <div class="contact-item">
                             <i class="fas fa-clock"></i>
                             <div class="contact-text">
@@ -2001,7 +1933,6 @@
                             </div>
                         </div>
 
-                        <!-- Services -->
                         <div class="contact-item">
                             <i class="fas fa-tools"></i>
                             <div class="contact-text">
@@ -2015,7 +1946,7 @@
         </section>
     </div>
 
-    <!-- Footer - Added Location Button -->
+    <!-- Footer -->
     <footer class="footer">
         <p class="footer-signature">
             Diseñado por <a href="https://nexoar-art.github.io/NEXO-art/" target="_blank">NEXO-ART <i class="fas fa-palette"></i></a>
@@ -2042,7 +1973,74 @@
             }, 1000);
         });
 
-        // Check Business Status
+        // ============================================
+        // BANNER CAROUSEL - PERFECT CENTERING
+        // ============================================
+        const bannerTrack = document.getElementById('bannerTrack');
+        const bannerViewport = document.getElementById('bannerViewport');
+        const slides = bannerTrack.querySelectorAll('.banner-slide');
+        const totalSlides = slides.length;
+        let currentSlide = 0;
+        let bannerTimer;
+
+        function centerSlide(index) {
+            const viewportWidth = bannerViewport.offsetWidth;
+            const slide = slides[index];
+            const slideRect = slide.getBoundingClientRect();
+            const slideWidth = slideRect.width;
+            
+            // Calculate the exact offset to center the slide in the viewport
+            const trackOffset = slideRect.left - bannerViewport.getBoundingClientRect().left;
+            const centerOffset = (viewportWidth - slideWidth) / 2;
+            const translateX = -(trackOffset - centerOffset);
+            
+            bannerTrack.style.transform = `translateX(${translateX}px)`;
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            centerSlide(index);
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            centerSlide(currentSlide);
+        }
+
+        function startBannerAutoplay() {
+            // Initial centering
+            setTimeout(() => {
+                centerSlide(0);
+                bannerTimer = setInterval(nextSlide, 4000);
+            }, 200);
+        }
+
+        // Pause on hover
+        bannerViewport.addEventListener('mouseenter', () => {
+            clearInterval(bannerTimer);
+        });
+
+        bannerViewport.addEventListener('mouseleave', () => {
+            bannerTimer = setInterval(nextSlide, 4000);
+        });
+
+        // Recalculate on resize for perfect centering
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                centerSlide(currentSlide);
+            }, 150);
+        });
+
+        // Start banner when page loads
+        window.addEventListener('load', () => {
+            startBannerAutoplay();
+        });
+
+        // ============================================
+        // BUSINESS STATUS CHECK
+        // ============================================
         function checkBusinessStatus() {
             const now = new Date();
             const day = now.getDay();
@@ -2062,7 +2060,12 @@
             }
         }
 
-        // Send WhatsApp Message from Form WITH EMOJIS
+        checkBusinessStatus();
+        setInterval(checkBusinessStatus, 60000);
+
+        // ============================================
+        // WHATSAPP FUNCTIONS
+        // ============================================
         function submitForm(e) {
             e.preventDefault();
             
@@ -2088,7 +2091,6 @@
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
         }
 
-        // Send Quick WhatsApp Message WITH EMOJIS
         function sendWhatsAppMessage() {
             const text = `*💬🔧 Consulta - Centro de Reparaciones Freddy 🔧*%0A%0A` +
                         `*👋 Hola!* Quisiera hacer una consulta sobre sus servicios.%0A` +
@@ -2097,7 +2099,6 @@
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
         }
 
-        // Send 24/7 Assistance Message WITH EMOJIS
         function sendAssistanceMessage() {
             const text = `*🚨 SERVICIO DE AUXILIO 24HS - Centro de Reparaciones Freddy 🆘🚨*%0A%0A` +
                         `*⚠️ NECESITO AUXILIO URGENTE! 🚨️*%0A%0A` +
@@ -2110,11 +2111,9 @@
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
         }
 
-        // Update status every minute
-        checkBusinessStatus();
-        setInterval(checkBusinessStatus, 60000);
-
-        // Add animation on scroll
+        // ============================================
+        // SCROLL ANIMATIONS
+        // ============================================
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -100px 0px'
@@ -2129,7 +2128,6 @@
             });
         }, observerOptions);
 
-        // Observe all cards and sections
         document.querySelectorAll('.testimonial-card, .form-section, .location-section, .service-card, .contact-item').forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(30px)';
@@ -2137,7 +2135,9 @@
             observer.observe(el);
         });
 
-        // Form validation enhancement
+        // ============================================
+        // FORM VALIDATION
+        // ============================================
         document.getElementById('appointmentForm').addEventListener('input', function(e) {
             if (e.target.value.trim() !== '') {
                 e.target.style.borderColor = '#43a047';
@@ -2146,7 +2146,9 @@
             }
         });
 
-        // Smooth scroll for all anchor links
+        // ============================================
+        // SMOOTH SCROLL
+        // ============================================
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 const href = this.getAttribute('href');
