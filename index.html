@@ -47,7 +47,7 @@
             line-height: 1.6;
         }
 
-        /* Animated Top Banner */
+        /* Animated Top Banner - RESPONSIVE */
         .top-banner {
             background: linear-gradient(90deg, #0d47a1 0%, #1565c0 50%, #0d47a1 100%);
             padding: 20px 0;
@@ -82,14 +82,17 @@
         .banner-item {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             padding: 0 50px;
             flex-shrink: 0;
+            text-align: center;
         }
 
         .banner-icon {
             font-size: 2rem;
             margin-right: 20px;
             animation: iconPulse 2s ease-in-out infinite;
+            display: inline-block;
         }
 
         @keyframes iconPulse {
@@ -101,6 +104,7 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
+            text-align: center;
         }
 
         .banner-title {
@@ -114,6 +118,7 @@
             font-size: 1rem;
             color: rgba(255,255,255,0.95);
             font-weight: 500;
+            max-width: 600px;
         }
 
         .banner-divider {
@@ -121,6 +126,7 @@
             font-size: 1.5rem;
             margin: 0 30px;
             animation: dividerPulse 1.5s ease-in-out infinite;
+            display: inline-block;
         }
 
         @keyframes dividerPulse {
@@ -135,6 +141,67 @@
 
         .top-banner:hover .banner-content {
             animation-play-state: paused;
+        }
+
+        /* Responsive Banner */
+        @media (max-width: 768px) {
+            .top-banner {
+                padding: 15px 0;
+            }
+
+            .banner-item {
+                padding: 0 25px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .banner-icon {
+                font-size: 1.8rem;
+                margin-right: 0;
+                margin-bottom: 8px;
+            }
+
+            .banner-title {
+                font-size: 1.1rem;
+            }
+
+            .banner-description {
+                font-size: 0.85rem;
+                line-height: 1.5;
+            }
+
+            .banner-divider {
+                font-size: 1.2rem;
+                margin: 0 15px;
+            }
+
+            .banner-content {
+                animation: bannerScrollMobile 25s linear infinite;
+            }
+
+            @keyframes bannerScrollMobile {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-50%); }
+            }
+        }
+
+        @media (max-width: 480px) {
+            .banner-item {
+                padding: 0 15px;
+            }
+
+            .banner-title {
+                font-size: 1rem;
+            }
+
+            .banner-description {
+                font-size: 0.8rem;
+            }
+
+            .banner-divider {
+                font-size: 1rem;
+                margin: 0 10px;
+            }
         }
 
         /* High-Quality Workshop Background Image - FULLY VISIBLE */
@@ -1200,22 +1267,6 @@
                 padding: 25px 20px;
             }
 
-            .banner-title {
-                font-size: 1.1rem;
-            }
-
-            .banner-description {
-                font-size: 0.9rem;
-            }
-
-            .banner-icon {
-                font-size: 1.5rem;
-            }
-
-            .banner-item {
-                padding: 0 30px;
-            }
-
             .cta-section {
                 padding: 40px 15px;
             }
@@ -1428,10 +1479,10 @@
         </div>
     </div>
 
-    <!-- Animated Top Banner -->
+    <!-- Animated Top Banner - BOTH MESSAGES -->
     <div class="top-banner">
         <div class="banner-content">
-            <!-- First Message - Duplicate for seamless loop -->
+            <!-- Message 1: Granizo -->
             <div class="banner-item">
                 <span class="banner-icon">🌩️</span>
                 <div class="banner-text">
@@ -1442,6 +1493,7 @@
             
             <span class="banner-divider">❙❙</span>
             
+            <!-- Message 2: Choque -->
             <div class="banner-item">
                 <span class="banner-icon">🚘</span>
                 <div class="banner-text">
@@ -1452,7 +1504,7 @@
             
             <span class="banner-divider">❙❙❙</span>
             
-            <!-- Second copy for seamless infinite loop -->
+            <!-- Duplicate Message 1: Granizo (for seamless loop) -->
             <div class="banner-item">
                 <span class="banner-icon">🌩️</span>
                 <div class="banner-text">
@@ -1463,6 +1515,7 @@
             
             <span class="banner-divider">❙❙</span>
             
+            <!-- Duplicate Message 2: Choque (for seamless loop) -->
             <div class="banner-item">
                 <span class="banner-icon">🚘</span>
                 <div class="banner-text">
