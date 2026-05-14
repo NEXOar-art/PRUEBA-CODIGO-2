@@ -5,210 +5,721 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Argentplay - Sala Principal</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #0f172a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        
-        /* Sistema de Login Simple */
-        #auth-screen { background: #1e293b; padding: 40px; border-radius: 12px; text-align: center; width: 300px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        .auth-input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 6px; border: none; background: #334155; color: white; box-sizing: border-box; }
-        .btn-primary { background: #3b82f6; width: 100%; padding: 12px; border: none; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-primary:hover { background: #2563eb; }
+        /* ===== VARIABLES DE TEMA AMARILLO/NEGRO ===== */
+        :root {
+            --gold-primary: #FFD700;
+            --gold-secondary: #FFC107;
+            --gold-dark: #B8860B;
+            --black-primary: #000000;
+            --black-secondary: #0a0a0a;
+            --black-tertiary: #1a1a1a;
+            --black-card: #141414;
+            --white-glow: rgba(255, 215, 0, 0.3);
+            --gold-glow: rgba(255, 193, 7, 0.5);
+        }
 
-        /* Sala de Subasta */
-        #auction-room { display: none; width: 90vw; max-width: 1200px; height: 90vh; background: #1e293b; border-radius: 15px; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.9); }
-        
-        .header { display: flex; justify-content: space-between; padding: 20px; background: #0f172a; border-radius: 15px 15px 0 0; align-items: center; }
-        .live-indicator { display: flex; align-items: center; gap: 10px; color: #ef4444; font-weight: bold; animation: pulseLive 2s infinite; }
-        @keyframes pulseLive { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        
-        .main-content { display: flex; flex: 1; padding: 20px; gap: 20px; }
-        .visual-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .product-image { width: 80%; max-height: 300px; object-fit: cover; border-radius: 12px; border: 2px solid #334155; }
-        
-        /* El Precio Monumental */
-        .massive-price { font-size: 6rem; font-weight: 900; color: #10b981; margin: 20px 0; text-shadow: 0 0 30px rgba(16, 185, 129, 0.4); transition: transform 0.1s, color 0.3s; }
-        .price-flash { transform: scale(1.1); color: #f59e0b; text-shadow: 0 0 50px rgba(245, 158, 11, 0.8); }
-        
-        .control-area { width: 350px; background: #334155; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; }
-        .tension-msg { color: #facc15; font-style: italic; font-size: 0.9rem; text-align: center; height: 20px; }
-        
-        .btn-bid { background: #10b981; color: white; border: none; padding: 15px; font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 10px; transition: 0.2s; }
-        .btn-bid:hover { background: #059669; }
-        
-        .input-manual { width: 100%; padding: 15px; font-size: 1.5rem; text-align: center; border-radius: 8px; border: none; margin-bottom: 10px; box-sizing: border-box; }
+        /* ===== BACKGROUND ANIMADO DE SUBASTA ===== */
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: var(--black-primary); 
+            color: var(--gold-primary); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden;
+            position: relative;
+        }
 
-        /* 🔥 NUEVOS ESTILOS: Countdown y Winner */
-        .countdown-banner {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            text-align: center;
-            padding: 15px;
-            font-size: 1.5rem;
+        /* Background con imagen de subasta animada */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(20,20,20,0.88) 50%, rgba(0,0,0,0.95) 100%),
+                url('https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            animation: bgPan 30s linear infinite alternate, bgPulse 8s ease-in-out infinite;
+            z-index: -2;
+            filter: brightness(0.6) contrast(1.1);
+        }
+
+        /* Overlay de partículas doradas */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(var(--gold-glow) 1px, transparent 1px),
+                radial-gradient(var(--gold-glow) 1px, transparent 1px);
+            background-size: 50px 50px, 75px 75px;
+            background-position: 0 0, 25px 25px;
+            opacity: 0.15;
+            z-index: -1;
+            animation: particlesFloat 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes bgPan {
+            0% { background-position: center center; }
+            100% { background-position: center 110%; }
+        }
+        @keyframes bgPulse {
+            0%, 100% { filter: brightness(0.6) contrast(1.1); }
+            50% { filter: brightness(0.7) contrast(1.2); }
+        }
+        @keyframes particlesFloat {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-50px) rotate(2deg); }
+        }
+
+        /* ===== EFECTOS Y MICRO-EFECTOS GLOBALES ===== */
+        * {
+            transition: all 0.2s ease;
+        }
+
+        .hover-glow:hover {
+            box-shadow: 0 0 25px var(--gold-glow), 0 0 50px var(--white-glow);
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .pulse-gold {
+            animation: pulseGold 2s infinite;
+        }
+        @keyframes pulseGold {
+            0%, 100% { box-shadow: 0 0 0 0 var(--gold-glow); }
+            50% { box-shadow: 0 0 0 12px rgba(255, 193, 7, 0); }
+        }
+
+        .text-glow {
+            text-shadow: 0 0 10px var(--gold-glow), 0 0 25px var(--gold-primary);
+        }
+
+        .float-effect {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .shine-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.15), transparent);
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+            pointer-events: none;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
+        }
+
+        /* ===== SISTEMA DE LOGIN ===== */
+        #auth-screen { 
+            background: linear-gradient(145deg, var(--black-card), var(--black-tertiary)); 
+            padding: 40px; 
+            border-radius: 20px; 
+            text-align: center; 
+            width: 320px; 
+            box-shadow: 0 15px 50px rgba(0,0,0,0.9), 0 0 40px var(--gold-glow);
+            border: 2px solid var(--gold-dark);
+            position: relative;
+            z-index: 10;
+        }
+        
+        #auth-screen::before {
+            content: '🔨 SUBASTA EN VIVO';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold-primary);
+            color: var(--black-primary);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
             font-weight: bold;
-            border-radius: 8px;
-            margin: 10px 0;
+            letter-spacing: 1px;
+        }
+
+        .auth-input { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 12px 0; 
+            border-radius: 10px; 
+            border: 2px solid var(--gold-dark); 
+            background: var(--black-tertiary); 
+            color: var(--gold-primary); 
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        .auth-input:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+        .auth-input::placeholder {
+            color: rgba(255, 215, 0, 0.5);
+        }
+
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary)); 
+            color: var(--black-primary);
+            width: 100%; 
+            padding: 14px; 
+            border: none; 
+            border-radius: 10px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 1.05rem;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary:hover { 
+            background: linear-gradient(135deg, var(--gold-secondary), var(--gold-primary));
+            box-shadow: 0 8px 25px var(--gold-glow);
+            transform: translateY(-2px);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* ===== SALA DE SUBASTA ===== */
+        #auction-room { 
+            display: none; 
+            width: 92vw; 
+            max-width: 1250px; 
+            height: 92vh; 
+            background: linear-gradient(145deg, var(--black-card), var(--black-tertiary)); 
+            border-radius: 20px; 
+            flex-direction: column; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 60px var(--gold-glow);
+            border: 3px solid var(--gold-dark);
+            position: relative;
+            z-index: 5;
+        }
+
+        /* Borde dorado animado */
+        #auction-room::before {
+            content: '';
+            position: absolute;
+            top: -3px; left: -3px; right: -3px; bottom: -3px;
+            background: linear-gradient(45deg, var(--gold-primary), var(--gold-secondary), var(--gold-dark), var(--gold-primary));
+            background-size: 400% 400%;
+            border-radius: 23px;
+            z-index: -1;
+            animation: borderGlow 4s ease infinite;
+            opacity: 0.7;
+        }
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 20px 25px; 
+            background: linear-gradient(90deg, var(--black-tertiary), var(--black-card)); 
+            border-radius: 17px 17px 0 0; 
+            align-items: center;
+            border-bottom: 2px solid var(--gold-dark);
+        }
+        
+        .live-indicator { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            color: var(--gold-primary); 
+            font-weight: bold; 
+            animation: pulseLive 1.5s infinite;
+            text-shadow: 0 0 10px var(--gold-glow);
+        }
+        @keyframes pulseLive { 
+            0%, 100% { opacity: 1; transform: scale(1); } 
+            50% { opacity: 0.85; transform: scale(0.98); } 
+        }
+        
+        .main-content { 
+            display: flex; 
+            flex: 1; 
+            padding: 25px; 
+            gap: 25px; 
+            overflow: hidden;
+        }
+        
+        .visual-area { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative;
+        }
+        
+        .product-image { 
+            width: 85%; 
+            max-height: 320px; 
+            object-fit: cover; 
+            border-radius: 16px; 
+            border: 3px solid var(--gold-dark);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+            position: relative;
+        }
+        .product-image::after {
+            content: '🔍 Lote Premium';
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: var(--gold-primary);
+            color: var(--black-primary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px var(--gold-glow);
+        }
+        
+        /* Precio Monumental Dorado */
+        .massive-price { 
+            font-size: 6.5rem; 
+            font-weight: 900; 
+            color: var(--gold-primary); 
+            margin: 25px 0; 
+            text-shadow: 0 0 20px var(--gold-glow), 0 0 50px var(--gold-primary); 
+            transition: transform 0.15s, color 0.3s, text-shadow 0.3s;
+            letter-spacing: -3px;
+            position: relative;
+        }
+        .massive-price::before {
+            content: '$';
+            position: absolute;
+            left: -25px;
+            top: 10px;
+            font-size: 3rem;
+            opacity: 0.8;
+        }
+        .price-flash { 
+            transform: scale(1.15) !important; 
+            color: var(--gold-secondary) !important; 
+            text-shadow: 0 0 30px var(--gold-glow), 0 0 80px var(--gold-primary) !important;
+        }
+        
+        .control-area { 
+            width: 360px; 
+            background: linear-gradient(145deg, var(--black-tertiary), var(--black-card)); 
+            padding: 25px; 
+            border-radius: 16px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between;
+            border: 2px solid var(--gold-dark);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+        }
+        
+        .tension-msg { 
+            color: var(--gold-secondary); 
+            font-style: italic; 
+            font-size: 0.95rem; 
+            text-align: center; 
+            height: 24px;
+            text-shadow: 0 0 8px var(--gold-glow);
+            min-height: 24px;
+        }
+        
+        .btn-bid { 
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary)); 
+            color: var(--black-primary); 
+            border: none; 
+            padding: 16px; 
+            font-size: 1.25rem; 
+            font-weight: bold; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            margin-bottom: 12px; 
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+        .btn-bid:hover { 
+            background: linear-gradient(135deg, var(--gold-secondary), var(--gold-primary));
+            box-shadow: 0 6px 20px var(--gold-glow);
+            transform: translateY(-2px);
+        }
+        .btn-bid:active {
+            transform: translateY(0);
+        }
+        
+        .input-manual { 
+            width: 100%; 
+            padding: 16px; 
+            font-size: 1.6rem; 
+            text-align: center; 
+            border-radius: 12px; 
+            border: 2px solid var(--gold-dark); 
+            margin-bottom: 12px; 
+            box-sizing: border-box;
+            background: var(--black-tertiary);
+            color: var(--gold-primary);
+            font-weight: bold;
+        }
+        .input-manual:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 20px var(--gold-glow);
+        }
+
+        /* ===== COUNTDOWN DE CIERRE ===== */
+        .countdown-banner {
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            color: var(--black-primary);
+            text-align: center;
+            padding: 16px 20px;
+            font-size: 1.4rem;
+            font-weight: 900;
+            border-radius: 12px;
+            margin: 12px 0;
             animation: pulseRed 1s infinite;
             display: none;
+            border: 2px solid var(--black-primary);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 0.5px;
         }
         @keyframes pulseRed {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            50% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.8); transform: scale(1); }
+            50% { box-shadow: 0 0 0 18px rgba(255, 193, 7, 0); transform: scale(1.02); }
         }
 
+        /* ===== MODAL DE GANADOR ===== */
         .winner-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             flex-direction: column;
+            backdrop-filter: blur(8px);
         }
         .winner-card {
-            background: linear-gradient(135deg, #1e293b, #334155);
-            padding: 40px;
-            border-radius: 20px;
+            background: linear-gradient(145deg, var(--black-card), var(--black-tertiary));
+            padding: 45px 50px;
+            border-radius: 24px;
             text-align: center;
-            max-width: 500px;
-            border: 3px solid #10b981;
-            box-shadow: 0 0 60px rgba(16, 185, 129, 0.6);
+            max-width: 520px;
+            border: 4px solid var(--gold-primary);
+            box-shadow: 0 0 80px var(--gold-glow), 0 20px 60px rgba(0,0,0,0.9);
+            position: relative;
+            animation: modalPop 0.4s ease-out;
         }
-        .winner-card h2 { color: #10b981; font-size: 2.5rem; margin: 0 0 20px; }
-        .winner-price { font-size: 3rem; font-weight: 900; color: white; margin: 20px 0; }
-        .payment-timer {
-            background: #0f172a;
-            padding: 20px;
-            border-radius: 12px;
-            margin: 20px 0;
-            font-size: 1.3rem;
+        @keyframes modalPop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
-        .payment-timer.urgent { color: #ef4444; animation: pulseRed 0.5s infinite; }
-        .btn-confirm {
-            background: #10b981;
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.2rem;
+        .winner-card::before {
+            content: '🏆';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            animation: float 2s ease-in-out infinite;
+            text-shadow: 0 0 20px var(--gold-glow);
+        }
+        .winner-card h2 { 
+            color: var(--gold-primary); 
+            font-size: 2.3rem; 
+            margin: 15px 0 25px; 
+            text-shadow: 0 0 15px var(--gold-glow);
+        }
+        .winner-id {
+            background: var(--gold-primary);
+            color: var(--black-primary);
+            padding: 8px 20px;
+            border-radius: 25px;
             font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            margin: 10px;
-            transition: 0.3s;
+            font-size: 1.1rem;
+            display: inline-block;
+            margin: 10px 0;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 15px var(--gold-glow);
         }
-        .btn-confirm:hover { background: #059669; transform: scale(1.05); }
-        .btn-cancel {
-            background: #64748b;
-            color: white;
+        .winner-price { 
+            font-size: 3.5rem; 
+            font-weight: 900; 
+            color: var(--gold-primary); 
+            margin: 20px 0; 
+            text-shadow: 0 0 25px var(--gold-glow);
+            letter-spacing: -2px;
+        }
+        .winner-price::before { content: '$ '; font-size: 2rem; }
+        
+        .payment-timer {
+            background: linear-gradient(145deg, var(--black-tertiary), var(--black-card));
+            padding: 22px;
+            border-radius: 16px;
+            margin: 25px 0;
+            font-size: 1.35rem;
+            border: 2px solid var(--gold-dark);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+        }
+        .payment-timer.urgent { 
+            color: var(--gold-secondary); 
+            animation: pulseUrgent 0.6s infinite; 
+            border-color: var(--gold-secondary);
+        }
+        @keyframes pulseUrgent {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.6); }
+            50% { box-shadow: 0 0 0 20px rgba(255, 193, 7, 0); }
+        }
+        
+        .btn-confirm {
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary));
+            color: var(--black-primary);
             border: none;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            border-radius: 10px;
+            padding: 16px 45px;
+            font-size: 1.25rem;
+            font-weight: bold;
+            border-radius: 14px;
             cursor: pointer;
-            margin: 10px;
+            margin: 12px;
+            transition: all 0.25s;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
         }
+        .btn-confirm:hover { 
+            background: linear-gradient(135deg, var(--gold-secondary), var(--gold-primary));
+            transform: scale(1.06);
+            box-shadow: 0 10px 30px var(--gold-glow);
+        }
+        .btn-cancel {
+            background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+            color: var(--gold-primary);
+            border: 2px solid var(--gold-dark);
+            padding: 16px 45px;
+            font-size: 1.15rem;
+            border-radius: 14px;
+            cursor: pointer;
+            margin: 12px;
+        }
+        .btn-cancel:hover {
+            background: linear-gradient(135deg, #5a5a5a, #3a3a3a);
+            border-color: var(--gold-primary);
+            transform: scale(1.03);
+        }
+        
         .payment-instructions {
-            background: #334155;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 0.95rem;
+            background: linear-gradient(145deg, var(--black-tertiary), var(--black-card));
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 0.98rem;
             text-align: left;
-            margin: 15px 0;
+            margin: 20px 0;
+            border-left: 4px solid var(--gold-primary);
+            line-height: 1.6;
         }
         .payment-instructions code {
-            background: #1e293b;
-            padding: 3px 8px;
-            border-radius: 4px;
-            color: #facc15;
+            background: var(--gold-primary);
+            color: var(--black-primary);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-family: monospace;
         }
 
-        /* Estado de subasta reiniciada */
+        /* ===== NOTIFICACIÓN DE REINICIO ===== */
         .restart-notice {
-            background: #7c3aed;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold-primary));
+            color: var(--black-primary);
+            padding: 12px 20px;
+            border-radius: 12px;
             text-align: center;
-            margin: 10px 0;
+            margin: 12px 0;
             display: none;
+            font-weight: bold;
+            animation: slideIn 0.3s ease;
+            border: 2px solid var(--black-primary);
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== BADGE DE USUARIO SIMULADO ===== */
+        .simulated-badge {
+            background: rgba(255, 215, 0, 0.15);
+            color: var(--gold-secondary);
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            margin-left: 8px;
+            border: 1px solid var(--gold-dark);
+            font-style: italic;
+        }
+
+        /* ===== EFECTO DE CONFETI AL GANAR ===== */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--gold-primary);
+            animation: confettiFall 3s ease-out forwards;
+            pointer-events: none;
+            z-index: 999;
+            border-radius: 2px;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .main-content { flex-direction: column; padding: 15px; }
+            .control-area { width: 100%; max-width: 400px; margin: 0 auto; }
+            .massive-price { font-size: 4.5rem; }
+            .winner-card { padding: 35px 30px; margin: 15px; }
         }
     </style>
 </head>
 <body>
 
 <!-- Pantalla de Login -->
-<div id="auth-screen">
-    <h2>Ingresar a Argentplay</h2>
-    <input type="text" class="auth-input" id="username" placeholder="Usuario">
+<div id="auth-screen" class="float-effect">
+    <h2 style="color: var(--gold-primary); margin-bottom: 5px; text-shadow: 0 0 15px var(--gold-glow);">⚡ Argentplay</h2>
+    <p style="color: rgba(255,215,0,0.7); font-size: 0.9rem; margin-bottom: 25px;">Acceso a Sala Premium</p>
+    
+    <input type="text" class="auth-input" id="username" placeholder="Nombre de usuario">
+    <input type="email" class="auth-input" id="useremail" placeholder="Email (opcional)">
     <input type="password" class="auth-input" placeholder="Contraseña">
-    <button class="btn-primary" onclick="enterRoom()">Entrar a la Sala</button>
+    
+    <button class="btn-primary hover-glow shine-effect" onclick="enterRoom()">
+        🚀 ENTRAR A LA SUBASTA
+    </button>
+    
+    <p style="color: rgba(255,215,0,0.5); font-size: 0.75rem; margin-top: 20px;">
+        🔐 Conexión segura • ID asignado automáticamente
+    </p>
 </div>
 
-<!-- Sala de Subasta (Oculta al inicio) -->
+<!-- Sala de Subasta -->
 <div id="auction-room">
     <div class="header">
         <div>
-            <h2 style="margin:0;">Lote #42: Reloj de Colección</h2>
-            <span style="color: #94a3b8;">Precio Base: $10.000</span>
+            <h2 style="margin:0; color: var(--gold-primary); text-shadow: 0 0 10px var(--gold-glow);">
+                🔨 Lote #42: Reloj de Colección
+            </h2>
+            <span style="color: var(--gold-secondary); font-size: 0.95rem;">Base: $10.000 • Comisión: 30%</span>
         </div>
         <div class="live-indicator">
-            🔴 EN VIVO <span id="user-count" style="color: white; font-weight: normal; margin-left: 10px;">👤 398 en sala</span>
+            <span style="width: 12px; height: 12px; background: var(--gold-primary); border-radius: 50%; display: inline-block; animation: pulseLive 1s infinite;"></span>
+            EN VIVO 
+            <span id="user-count" style="color: var(--gold-primary); font-weight: normal; margin-left: 8px;">
+                👤 <span id="user-number">398</span> en sala
+                <span class="simulated-badge">simulado</span>
+            </span>
         </div>
     </div>
 
     <div class="main-content">
         <!-- Visualización y Precio -->
         <div class="visual-area">
-            <img src="https://via.placeholder.com/600x300/1e293b/ffffff?text=Imagen+del+Producto" alt="Producto" class="product-image">
-            <div class="massive-price" id="currentPrice">$ 10.000</div>
+            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80" 
+                 alt="Reloj de Colección" 
+                 class="product-image hover-glow"
+                 style="animation: float 4s ease-in-out infinite;">
             
-            <!-- 🔥 Countdown de cierre (3 minutos) -->
-            <div class="countdown-banner" id="closing-countdown">
-                ⏱️ CIERRE INMINENTE: <span id="countdown-timer">03:00</span>
+            <div class="massive-price text-glow" id="currentPrice">$ 10.000</div>
+            
+            <!-- Countdown de cierre (3 minutos) - se activa tras 70s de inactividad -->
+            <div class="countdown-banner pulse-gold" id="closing-countdown">
+                ⚡ CIERRE INMINENTE: <span id="countdown-timer">03:00</span>
             </div>
             
-            <div id="timer" style="font-size: 2rem; color: #ef4444; font-weight: bold;">00:45</div>
-            <div class="restart-notice" id="restart-notice">🔄 Subasta reiniciada - ¡Nuevas ofertas disponibles!</div>
+            <div class="restart-notice" id="restart-notice">
+                🔄 Subasta reiniciada • ¡Nuevas ofertas disponibles!
+            </div>
         </div>
 
-        <!-- Panel de Control y Presión -->
-        <div class="control-area">
+        <!-- Panel de Control -->
+        <div class="control-area hover-glow">
             <div>
-                <h3 style="margin-top: 0;">Panel de Oferta</h3>
-                <p style="color: #94a3b8; font-size: 0.9rem;">Tus ofertas son legalmente vinculantes. Las reglas de Argentplay exigen un pago del 30% en 5 mins en caso de ganar.</p>
+                <h3 style="margin-top: 0; color: var(--gold-primary); border-bottom: 1px solid var(--gold-dark); padding-bottom: 12px;">
+                    💰 Panel de Oferta
+                </h3>
+                <p style="color: rgba(255,215,0,0.8); font-size: 0.9rem; line-height: 1.5;">
+                    Tus ofertas son <strong style="color: var(--gold-primary);">legalmente vinculantes</strong>. 
+                    Reglas Argentplay: pago del <strong>30%</strong> en 5 mins para confirmar.
+                </p>
                 <div class="tension-msg" id="tension-text"></div>
+                
+                <!-- ID del usuario actual -->
+                <div style="margin-top: 15px; text-align: center;">
+                    <span style="color: rgba(255,215,0,0.7); font-size: 0.85rem;">Tu ID de participante:</span><br>
+                    <strong id="current-user-id" style="color: var(--gold-primary); font-size: 1.1rem; letter-spacing: 1px;">ARG-XXXX</strong>
+                </div>
             </div>
 
             <div>
-                <button class="btn-bid" style="width: 100%;" onclick="placeBid(1000)">+ $ 1.000</button>
-                <button class="btn-bid" style="width: 100%;" onclick="placeBid(5000)">+ $ 5.000</button>
+                <button class="btn-bid hover-glow shine-effect" style="width: 100%;" onclick="placeBid(1000)">
+                    + $ 1.000 ⚡
+                </button>
+                <button class="btn-bid hover-glow shine-effect" style="width: 100%;" onclick="placeBid(5000)">
+                    + $ 5.000 🚀
+                </button>
                 
                 <input type="number" id="customBid" class="input-manual" placeholder="Monto específico">
-                <button class="btn-primary" style="font-size: 1.2rem; padding: 15px;" onclick="placeManualBid()">Ofertar Monto</button>
+                <button class="btn-primary hover-glow shine-effect" style="font-size: 1.15rem; padding: 14px;" onclick="placeManualBid()">
+                    💎 OFERTAR MONTO
+                </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 🔥 Modal de Ganador -->
+<!-- Modal de Ganador -->
 <div class="winner-modal" id="winner-modal">
     <div class="winner-card">
         <h2>🎉 ¡FELICITACIONES!</h2>
-        <p style="font-size: 1.3rem;">Has ganado el <strong>Lote #42</strong></p>
-        <div class="winner-price" id="winner-final-price">$ 10.000</div>
+        <p style="font-size: 1.2rem; color: rgba(255,215,0,0.9);">
+            El participante <strong class="winner-id" id="winner-id-display">ARG-XXXX</strong> ha ganado
+        </p>
+        <p style="color: rgba(255,215,0,0.7); margin: 5px 0 15px;">Lote #42: Reloj de Colección</p>
+        
+        <div class="winner-price" id="winner-final-price">10.000</div>
         
         <div class="payment-timer" id="payment-timer">
-            ⏰ Tiempo restante para confirmar pago: <strong id="payment-countdown">05:00</strong>
+            ⏰ Confirmar transferencia del 30%: <strong id="payment-countdown" style="color: var(--gold-primary);">05:00</strong>
         </div>
         
         <div class="payment-instructions">
-            <strong>📋 Instrucciones de pago:</strong><br>
-            1. Transferir el <strong>30%</strong> del valor final: <code id="payment-amount">$ 3.000</code><br>
-            2. Usar referencia: <code>ARGENTPAY-<span id="winner-ref">XXXX</span></code><br>
-            3. Confirmar transferencia con el botón de abajo
+            <strong style="color: var(--gold-primary);">📋 Instrucciones:</strong><br>
+            1️⃣ Transferir <strong id="payment-amount">$ 3.000</strong> (30% del total)<br>
+            2️⃣ Referencia: <code id="winner-ref">ARGPAY-XXXX</code><br>
+            3️⃣ Confirmar con el botón verde ✅
         </div>
         
-        <button class="btn-confirm" onclick="confirmPayment()">✅ Ya realicé la transferencia</button>
-        <button class="btn-cancel" onclick="cancelAuction()">❌ Cancelar / Reiniciar</button>
+        <button class="btn-confirm hover-glow" onclick="confirmPayment()">
+            ✅ TRANSFERENCIA REALIZADA
+        </button>
+        <button class="btn-cancel hover-glow" onclick="cancelAuction()">
+            ❌ REINICIAR SUBASTA
+        </button>
     </div>
 </div>
 
@@ -217,36 +728,78 @@
     let currentPrice = 10000;
     let simulatedUsers = 398;
     let lastBidTime = Date.now();
-    let auctionState = 'active'; // 'active', 'closing', 'won', 'payment_pending', 'restarting'
+    let auctionState = 'active'; // 'active', 'closing', 'won', 'payment_pending', 'completed', 'restarting'
+    let currentUserID = null; // ID único asignado al login
     
     // Timers
     let closingTimerInterval = null;
     let paymentTimerInterval = null;
     let inactivityCheckInterval = null;
+    let userSimInterval = null;
     
-    // Configuración de tiempos (en milisegundos)
-    const INACTIVITY_THRESHOLD = 30000; // 30 segundos sin ofertas para activar countdown
+    // ⚡ CONFIGURACIÓN ACTUALIZADA
+    const INACTIVITY_THRESHOLD = 70000; // 🔥 70 segundos sin ofertas para activar countdown
     const CLOSING_DURATION = 3 * 60 * 1000; // 3 minutos de countdown
     const PAYMENT_DURATION = 5 * 60 * 1000; // 5 minutos para pagar
 
     // ===== FUNCIONES PRINCIPALES =====
 
+    // Generar ID único aleatorio para el usuario
+    function generateUserID() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let id = 'ARG-';
+        for(let i = 0; i < 6; i++) {
+            id += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return id;
+    }
+
     function enterRoom() {
         const user = document.getElementById('username').value;
+        const email = document.getElementById('useremail').value;
+        
         if(user) {
+            // 🔥 Asignar ID único al usuario
+            currentUserID = generateUserID();
+            document.getElementById('current-user-id').innerText = currentUserID;
+            
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('auction-room').style.display = 'flex';
+            
+            // Iniciar simulaciones
             simulateNetworkActivity();
-            startInactivityMonitor(); // 🔥 Iniciar monitoreo de inactividad
+            startInactivityMonitor(); // 🔥 Monitoreo de inactividad (70s)
+            
+            // Efecto de entrada
+            setTimeout(() => {
+                document.getElementById('auction-room').style.animation = 'modalPop 0.5s ease-out';
+            }, 100);
         } else {
-            alert("Por favor ingrese un usuario");
+            showAlert("⚠️ Por favor ingresa un usuario", "error");
         }
+    }
+
+    // Alerta personalizada con estilo dorado
+    function showAlert(message, type = 'info') {
+        const alert = document.createElement('div');
+        alert.style.cssText = `
+            position: fixed; top: 20px; right: 20px; z-index: 2000;
+            background: ${type === 'error' ? 'linear-gradient(135deg, #dc2626, #b91c1c)' : 'linear-gradient(135deg, #FFD700, #FFC107)'};
+            color: ${type === 'error' ? 'white' : '#000'};
+            padding: 15px 25px; border-radius: 12px; font-weight: bold;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            animation: slideIn 0.3s ease;
+            border: 2px solid ${type === 'error' ? '#fff' : '#000'};
+        `;
+        alert.innerText = message;
+        document.body.appendChild(alert);
+        setTimeout(() => alert.remove(), 4000);
     }
 
     function flashPrice() {
         const priceEl = document.getElementById('currentPrice');
         priceEl.classList.add('price-flash');
-        setTimeout(() => priceEl.classList.remove('price-flash'), 150);
+        setTimeout(() => priceEl.classList.remove('price-flash'), 180);
     }
 
     function updateDisplay() {
@@ -264,30 +817,37 @@
         if(auctionState !== 'active' && auctionState !== 'closing') return;
         currentPrice += increment;
         updateDisplay();
-        document.getElementById('tension-text').innerText = "¡Has tomado la delantera!";
+        showTensionMessage("¡Has tomado la delantera! 🏆");
     }
 
     function placeManualBid() {
         if(auctionState !== 'active' && auctionState !== 'closing') return;
         const inputVal = parseInt(document.getElementById('customBid').value);
-        if (inputVal > currentPrice) {
+        if (inputVal && inputVal > currentPrice) {
             currentPrice = inputVal;
             updateDisplay();
             document.getElementById('customBid').value = '';
-            document.getElementById('tension-text').innerText = "¡Oferta agresiva registrada!";
+            showTensionMessage("¡Oferta agresiva registrada! 💎");
         } else {
-            alert("La oferta debe ser superior al precio actual.");
+            showAlert("La oferta debe ser superior al precio actual", "error");
         }
     }
 
-    // ===== 🔥 SISTEMA DE COUNTDOWN DE CIERRE (3 MIN) =====
+    function showTensionMessage(text) {
+        const el = document.getElementById('tension-text');
+        el.innerText = text;
+        el.style.animation = 'none';
+        setTimeout(() => el.style.animation = 'slideIn 0.3s ease', 10);
+    }
+
+    // ===== 🔥 SISTEMA DE COUNTDOWN (70s inactividad → 3 min cierre) =====
     
     function startInactivityMonitor() {
         inactivityCheckInterval = setInterval(() => {
             const now = Date.now();
             const timeSinceLastBid = now - lastBidTime;
             
-            // Si no hay ofertas por INACTIVITY_THRESHOLD y la subasta está activa
+            // Si no hay ofertas por 70 segundos y la subasta está activa
             if(timeSinceLastBid >= INACTIVITY_THRESHOLD && auctionState === 'active') {
                 startClosingCountdown();
             }
@@ -298,12 +858,11 @@
         if(auctionState !== 'active') return;
         
         auctionState = 'closing';
-        document.getElementById('closing-countdown').style.display = 'block';
-        document.getElementById('tension-text').innerText = "⚠️ ¡Última oportunidad para ofertar!";
+        const countdownEl = document.getElementById('closing-countdown');
+        countdownEl.style.display = 'block';
+        showTensionMessage("⚡ ¡Última oportunidad para ofertar!");
         
         let remaining = CLOSING_DURATION;
-        
-        // Actualizar display inmediatamente
         updateCountdownDisplay(remaining);
         
         closingTimerInterval = setInterval(() => {
@@ -318,7 +877,6 @@
     }
 
     function resetClosingCountdown() {
-        // Si alguien oferta durante el countdown, volvemos a estado activo
         auctionState = 'active';
         document.getElementById('closing-countdown').style.display = 'none';
         document.getElementById('tension-text').innerText = "";
@@ -335,28 +893,53 @@
         document.getElementById('countdown-timer').innerText = 
             `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         
-        // Efecto visual cuando queda menos de 30 segundos
+        // Efecto visual intensivo cuando queda menos de 30 segundos
         if(totalSeconds <= 30) {
-            document.getElementById('closing-countdown').style.background = 'linear-gradient(135deg, #dc2626, #b91c1c)';
-            document.getElementById('tension-text').innerText = "🔥 ¡CIERRE INMINENTE!";
+            document.getElementById('closing-countdown').style.background = 'linear-gradient(135deg, #FFC107, #B8860B)';
+            showTensionMessage("🔥 ¡CIERRE INMINENTE!");
+        }
+        if(totalSeconds <= 10) {
+            document.getElementById('countdown-timer').style.animation = 'pulseUrgent 0.4s infinite';
         }
     }
 
-    // ===== 🔥 SISTEMA DE GANADOR Y PAGO (5 MIN) =====
+    // ===== 🔥 SISTEMA DE GANADOR + PAGO (5 MIN) =====
     
     function declareWinner() {
         auctionState = 'won';
         clearInterval(inactivityCheckInterval);
         
+        // Efecto de confeti
+        createConfetti();
+        
         const winnerModal = document.getElementById('winner-modal');
         const winnerRef = Math.random().toString(36).substring(2, 8).toUpperCase();
         
-        document.getElementById('winner-final-price').innerText = "$ " + currentPrice.toLocaleString();
+        // Mostrar ID del ganador (el que tenía la última oferta)
+        document.getElementById('winner-id-display').innerText = currentUserID;
+        document.getElementById('winner-final-price').innerText = currentPrice.toLocaleString();
         document.getElementById('payment-amount').innerText = "$ " + Math.round(currentPrice * 0.3).toLocaleString();
-        document.getElementById('winner-ref').innerText = winnerRef;
+        document.getElementById('winner-ref').innerText = `ARGPAY-${winnerRef}`;
         
         winnerModal.style.display = 'flex';
         startPaymentTimer();
+    }
+
+    // Efecto de confeti dorado
+    function createConfetti() {
+        for(let i = 0; i < 50; i++) {
+            setTimeout(() => {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.background = Math.random() > 0.5 ? 'var(--gold-primary)' : 'var(--gold-secondary)';
+                confetti.style.width = Math.random() * 8 + 6 + 'px';
+                confetti.style.height = confetti.style.width;
+                confetti.style.animationDuration = Math.random() * 2 + 2 + 's';
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 4000);
+            }, i * 50);
+        }
     }
 
     function startPaymentTimer() {
@@ -387,7 +970,10 @@
         // Alerta visual cuando queda menos de 1 minuto
         if(totalSeconds <= 60) {
             container.classList.add('urgent');
-            document.getElementById('tension-text').innerText = "⚠️ ¡Poco tiempo para confirmar!";
+            showTensionMessage("⚠️ ¡Poco tiempo para confirmar!");
+        }
+        if(totalSeconds <= 15) {
+            element.style.animation = 'pulseUrgent 0.4s infinite';
         }
     }
 
@@ -397,19 +983,27 @@
         clearInterval(paymentTimerInterval);
         auctionState = 'completed';
         
+        // Efecto de éxito
         document.getElementById('winner-modal').innerHTML = `
             <div class="winner-card" style="border-color: #3b82f6;">
-                <h2 style="color: #3b82f6;">✅ ¡PAGO CONFIRMADO!</h2>
-                <p style="font-size: 1.2rem;">Tu transacción ha sido registrada exitosamente.</p>
-                <p style="color: #94a3b8;">Recibirás un email con los detalles de envío del Lote #42 en las próximas 24hs.</p>
-                <button class="btn-confirm" onclick="location.reload()">🏠 Volver al inicio</button>
+                <div style="font-size: 4rem; margin-bottom: 10px;">✅</div>
+                <h2 style="color: var(--gold-primary);">¡PAGO CONFIRMADO!</h2>
+                <p style="font-size: 1.15rem; color: rgba(255,215,0,0.9);">
+                    Participante <strong style="color: var(--gold-primary);">${currentUserID}</strong>
+                </p>
+                <p style="color: rgba(255,215,0,0.7); margin: 15px 0;">
+                    Transacción registrada exitosamente.<br>
+                    Recibirás email con detalles de envío del <strong>Lote #42</strong> en 24hs.
+                </p>
+                <button class="btn-confirm hover-glow" onclick="location.reload()">
+                    🏠 VOLVER AL INICIO
+                </button>
             </div>
         `;
     }
 
     function cancelAuction() {
         if(auctionState !== 'payment_pending' && auctionState !== 'won') return;
-        
         clearInterval(paymentTimerInterval);
         restartAuction();
     }
@@ -418,13 +1012,20 @@
         auctionState = 'timeout';
         document.getElementById('winner-modal').innerHTML = `
             <div class="winner-card" style="border-color: #ef4444;">
-                <h2 style="color: #ef4444;">⏰ TIEMPO AGOTADO</h2>
-                <p style="font-size: 1.2rem;">No se confirmó el pago en el tiempo establecido.</p>
-                <p style="color: #facc15; margin: 20px 0;">La subasta se reiniciará automáticamente...</p>
-                <button class="btn-primary" onclick="restartAuction()">🔄 Reiniciar ahora</button>
+                <div style="font-size: 4rem; margin-bottom: 10px; color: #ef4444;">⏰</div>
+                <h2 style="color: var(--gold-secondary);">TIEMPO AGOTADO</h2>
+                <p style="font-size: 1.1rem; color: rgba(255,215,0,0.8);">
+                    No se confirmó el pago en 5 minutos.
+                </p>
+                <p style="color: var(--gold-primary); margin: 20px 0; font-weight: bold;">
+                    La subasta se reiniciará automáticamente...
+                </p>
+                <button class="btn-primary hover-glow" onclick="restartAuction()">
+                    🔄 REINICIAR AHORA
+                </button>
             </div>
         `;
-        setTimeout(restartAuction, 5000); // Auto-restart en 5 segundos
+        setTimeout(restartAuction, 6000);
     }
 
     function restartAuction() {
@@ -444,22 +1045,30 @@
         document.getElementById('winner-modal').innerHTML = `
             <div class="winner-card">
                 <h2>🎉 ¡FELICITACIONES!</h2>
-                <p style="font-size: 1.3rem;">Has ganado el <strong>Lote #42</strong></p>
-                <div class="winner-price" id="winner-final-price">$ 10.000</div>
+                <p style="font-size: 1.2rem; color: rgba(255,215,0,0.9);">
+                    El participante <strong class="winner-id" id="winner-id-display">ARG-XXXX</strong> ha ganado
+                </p>
+                <p style="color: rgba(255,215,0,0.7); margin: 5px 0 15px;">Lote #42: Reloj de Colección</p>
+                
+                <div class="winner-price" id="winner-final-price">10.000</div>
                 
                 <div class="payment-timer" id="payment-timer">
-                    ⏰ Tiempo restante para confirmar pago: <strong id="payment-countdown">05:00</strong>
+                    ⏰ Confirmar transferencia del 30%: <strong id="payment-countdown" style="color: var(--gold-primary);">05:00</strong>
                 </div>
                 
                 <div class="payment-instructions">
-                    <strong>📋 Instrucciones de pago:</strong><br>
-                    1. Transferir el <strong>30%</strong> del valor final: <code id="payment-amount">$ 3.000</code><br>
-                    2. Usar referencia: <code>ARGENTPAY-<span id="winner-ref">XXXX</span></code><br>
-                    3. Confirmar transferencia con el botón de abajo
+                    <strong style="color: var(--gold-primary);">📋 Instrucciones:</strong><br>
+                    1️⃣ Transferir <strong id="payment-amount">$ 3.000</strong> (30% del total)<br>
+                    2️⃣ Referencia: <code id="winner-ref">ARGPAY-XXXX</code><br>
+                    3️⃣ Confirmar con el botón verde ✅
                 </div>
                 
-                <button class="btn-confirm" onclick="confirmPayment()">✅ Ya realicé la transferencia</button>
-                <button class="btn-cancel" onclick="cancelAuction()">❌ Cancelar / Reiniciar</button>
+                <button class="btn-confirm hover-glow" onclick="confirmPayment()">
+                    ✅ TRANSFERENCIA REALIZADA
+                </button>
+                <button class="btn-cancel hover-glow" onclick="cancelAuction()">
+                    ❌ REINICIAR SUBASTA
+                </button>
             </div>
         `;
         
@@ -472,42 +1081,65 @@
         startInactivityMonitor();
     }
 
-    // ===== SIMULACIÓN DE ACTIVIDAD DE RED =====
+    // ===== SIMULACIÓN DE ACTIVIDAD (USUARIOS Y OFERTAS) =====
     function simulateNetworkActivity() {
-        // Fluctuación de usuarios en sala
-        setInterval(() => {
-            const change = Math.floor(Math.random() * 5) - 2;
+        // 🔥 Simulación de usuarios en sala (NO real, solo visual)
+        userSimInterval = setInterval(() => {
+            const change = Math.floor(Math.random() * 7) - 3; // -3 a +3
             simulatedUsers += change;
-            if(simulatedUsers > 400) simulatedUsers = 400;
-            if(simulatedUsers < 50) simulatedUsers = 50;
-            document.getElementById('user-count').innerText = `👤 ${simulatedUsers} en sala`;
-        }, 3000);
+            // Mantener en rango realista
+            if(simulatedUsers > 450) simulatedUsers = 450;
+            if(simulatedUsers < 80) simulatedUsers = 80;
+            document.getElementById('user-number').innerText = simulatedUsers;
+            
+            // Micro-efecto en el contador
+            const userEl = document.getElementById('user-count');
+            userEl.style.transform = 'scale(1.05)';
+            setTimeout(() => userEl.style.transform = 'scale(1)', 150);
+        }, 2500);
 
-        // Simulador de "Tensión" de otros usuarios (solo si subasta está activa/closing)
+        // Simulador de "presión" de otros usuarios (solo si subasta activa/closing)
         setInterval(() => {
             if(auctionState !== 'active' && auctionState !== 'closing') return;
             
-            const randomChance = Math.random();
-            if (randomChance > 0.7) {
-                document.getElementById('tension-text').innerText = "Varios usuarios están escribiendo...";
+            if(Math.random() > 0.75) {
+                const messages = [
+                    "👀 Otro participante está evaluando...",
+                    "💬 Chat: 'Voy por ese lote'",
+                    "⚡ Actividad detectada en sala...",
+                    "🎯 Usuario preparando oferta..."
+                ];
+                showTensionMessage(messages[Math.floor(Math.random() * messages.length)]);
+                
                 setTimeout(() => {
-                    if(Math.random() > 0.5 && auctionState === 'active') {
-                        currentPrice += 1000;
+                    if(Math.random() > 0.6 && auctionState === 'active') {
+                        // Oferta simulada de "otro usuario"
+                        currentPrice += Math.floor(Math.random() * 3 + 1) * 1000;
                         updateDisplay();
-                        document.getElementById('tension-text').innerText = "¡Nueva oferta de otro participante!";
-                    } else {
-                        if(auctionState === 'active') document.getElementById('tension-text').innerText = "";
+                        showTensionMessage("💥 ¡Nueva oferta de la competencia!");
+                    } else if(auctionState === 'active') {
+                        document.getElementById('tension-text').innerText = "";
                     }
-                }, 1500);
+                }, 1800);
             }
-        }, 5000);
+        }, 6000);
     }
 
-    // ===== CLEANUP (Buena práctica) =====
+    // ===== CLEANUP =====
     window.addEventListener('beforeunload', () => {
-        if(closingTimerInterval) clearInterval(closingTimerInterval);
-        if(paymentTimerInterval) clearInterval(paymentTimerInterval);
-        if(inactivityCheckInterval) clearInterval(inactivityCheckInterval);
+        [closingTimerInterval, paymentTimerInterval, inactivityCheckInterval, userSimInterval]
+            .forEach(timer => timer && clearInterval(timer));
+    });
+
+    // Efecto de entrada suave al cargar
+    window.addEventListener('load', () => {
+        document.getElementById('auth-screen').style.opacity = '0';
+        document.getElementById('auth-screen').style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            document.getElementById('auth-screen').style.transition = 'all 0.5s ease';
+            document.getElementById('auth-screen').style.opacity = '1';
+            document.getElementById('auth-screen').style.transform = 'translateY(0)';
+        }, 100);
     });
 </script>
 
