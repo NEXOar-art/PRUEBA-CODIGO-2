@@ -3,66 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subasta Privada Live</title>
+    <title>Argentplay - Sala Principal</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .auction-card { background: #1e293b; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; width: 350px; }
-        .price-display { font-size: 2.5rem; font-weight: bold; margin: 20px 0; transition: text-shadow 0.3s ease; }
-        .glow { text-shadow: 0 0 20px #10b981; color: #10b981; }
-        .btn-bid { background: #3b82f6; color: white; border: none; padding: 15px 30px; font-size: 1.2rem; border-radius: 8px; cursor: pointer; transition: transform 0.1s, background 0.3s; width: 100%; font-weight: bold;}
-        .btn-bid:hover { background: #2563eb; transform: scale(1.02); }
-        .btn-bid:active { transform: scale(0.95); }
-        .timer { font-size: 1.2rem; color: #f59e0b; margin-bottom: 20px; }
-        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
-        .urgent { color: #ef4444; animation: pulse 1s infinite; font-weight: bold; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0f172a; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        
+        /* Sistema de Login Simple */
+        #auth-screen { background: #1e293b; padding: 40px; border-radius: 12px; text-align: center; width: 300px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .auth-input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 6px; border: none; background: #334155; color: white; box-sizing: border-box; }
+        .btn-primary { background: #3b82f6; width: 100%; padding: 12px; border: none; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-primary:hover { background: #2563eb; }
+
+        /* Sala de Subasta */
+        #auction-room { display: none; width: 90vw; max-width: 1200px; height: 90vh; background: #1e293b; border-radius: 15px; display: none; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.9); }
+        
+        .header { display: flex; justify-content: space-between; padding: 20px; background: #0f172a; border-radius: 15px 15px 0 0; align-items: center; }
+        .live-indicator { display: flex; align-items: center; gap: 10px; color: #ef4444; font-weight: bold; animation: pulseLive 2s infinite; }
+        @keyframes pulseLive { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        
+        .main-content { display: flex; flex: 1; padding: 20px; gap: 20px; }
+        .visual-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .product-image { width: 80%; max-height: 300px; object-fit: cover; border-radius: 12px; border: 2px solid #334155; }
+        
+        /* El Precio Monumental */
+        .massive-price { font-size: 6rem; font-weight: 900; color: #10b981; margin: 20px 0; text-shadow: 0 0 30px rgba(16, 185, 129, 0.4); transition: transform 0.1s, color 0.3s; }
+        .price-flash { transform: scale(1.1); color: #f59e0b; text-shadow: 0 0 50px rgba(245, 158, 11, 0.8); }
+        
+        .control-area { width: 350px; background: #334155; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; }
+        .tension-msg { color: #facc15; font-style: italic; font-size: 0.9rem; text-align: center; height: 20px; }
+        
+        .btn-bid { background: #10b981; color: white; border: none; padding: 15px; font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; margin-bottom: 10px; transition: 0.2s; }
+        .btn-bid:hover { background: #059669; }
+        
+        .input-manual { width: 100%; padding: 15px; font-size: 1.5rem; text-align: center; border-radius: 8px; border: none; margin-bottom: 10px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-<div class="auction-card">
-    <h2>Subasta #001</h2>
-    <div class="timer" id="timer">Tiempo restante: 00:45</div>
-    <div class="price-display" id="currentPrice">$ 100,000</div>
-    <button class="btn-bid" onclick="placeBid()">Pujar +$5,000</button>
+<!-- Pantalla de Login -->
+<div id="auth-screen">
+    <h2>Ingresar a Argentplay</h2>
+    <input type="text" class="auth-input" id="username" placeholder="Usuario">
+    <input type="password" class="auth-input" placeholder="Contraseña">
+    <button class="btn-primary" onclick="enterRoom()">Entrar a la Sala</button>
+</div>
+
+<!-- Sala de Subasta (Oculta al inicio) -->
+<div id="auction-room">
+    <div class="header">
+        <div>
+            <h2 style="margin:0;">Lote #42: Reloj de Colección</h2>
+            <span style="color: #94a3b8;">Precio Base: $10.000</span>
+        </div>
+        <div class="live-indicator">
+            🔴 EN VIVO <span id="user-count" style="color: white; font-weight: normal; margin-left: 10px;">👤 398 en sala</span>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Visualización y Precio -->
+        <div class="visual-area">
+            <img src="https://via.placeholder.com/600x300/1e293b/ffffff?text=Imagen+del+Producto" alt="Producto" class="product-image">
+            <div class="massive-price" id="currentPrice">$ 10.000</div>
+            <div id="timer" style="font-size: 2rem; color: #ef4444; font-weight: bold;">00:45</div>
+        </div>
+
+        <!-- Panel de Control y Presión -->
+        <div class="control-area">
+            <div>
+                <h3 style="margin-top: 0;">Panel de Oferta</h3>
+                <p style="color: #94a3b8; font-size: 0.9rem;">Tus ofertas son legalmente vinculantes. Las reglas de Argentplay exigen un pago del 30% en 5 mins en caso de ganar.</p>
+                <div class="tension-msg" id="tension-text"></div>
+            </div>
+
+            <div>
+                <button class="btn-bid" style="width: 100%;" onclick="placeBid(1000)">+ $ 1.000</button>
+                <button class="btn-bid" style="width: 100%;" onclick="placeBid(5000)">+ $ 5.000</button>
+                
+                <input type="number" id="customBid" class="input-manual" placeholder="Monto específico">
+                <button class="btn-primary" style="font-size: 1.2rem; padding: 15px;" onclick="placeManualBid()">Ofertar Monto</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-    // Conexión al WebSocket de FastAPI
-    const ws = new WebSocket("ws://localhost:8000/ws/auction/1");
-    let currentPrice = 0;
-    const priceDisplay = document.getElementById("currentPrice");
+    let currentPrice = 10000;
+    let simulatedUsers = 398;
 
-    ws.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-        if (data.type === "init" || data.type === "new_bid") {
-            currentPrice = data.price;
-            priceDisplay.innerText = "$ " + currentPrice.toLocaleString();
-            
-            // Microefecto de destello (Glow)
-            priceDisplay.classList.add("glow");
-            setTimeout(() => priceDisplay.classList.remove("glow"), 500);
+    // Transición del login a la sala
+    function enterRoom() {
+        const user = document.getElementById('username').value;
+        if(user) {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('auction-room').style.display = 'flex';
+            simulateNetworkActivity();
+        } else {
+            alert("Por favor ingrese un usuario");
         }
-    };
-
-    function placeBid() {
-        const newBid = currentPrice + 5000; // Incremento fijo de ejemplo
-        ws.send(JSON.stringify({ user: "User123", amount: newBid }));
     }
 
-    // Simulación de cronómetro con microefecto de urgencia
-    let timeLeft = 45;
-    setInterval(() => {
-        timeLeft--;
-        const timerEl = document.getElementById("timer");
-        timerEl.innerText = `Tiempo restante: 00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
-        if (timeLeft <= 10 && timeLeft > 0) {
-            timerEl.classList.add("urgent");
-        } else if (timeLeft <= 0) {
-            timerEl.innerText = "SUBASTA CERRADA";
-            timerEl.classList.remove("urgent");
-            document.querySelector(".btn-bid").disabled = true;
+    // Efecto de explosión de precio
+    function flashPrice() {
+        const priceEl = document.getElementById('currentPrice');
+        priceEl.classList.add('price-flash');
+        setTimeout(() => priceEl.classList.remove('price-flash'), 150);
+    }
+
+    function updateDisplay() {
+        document.getElementById('currentPrice').innerText = "$ " + currentPrice.toLocaleString();
+        flashPrice();
+    }
+
+    function placeBid(increment) {
+        currentPrice += increment;
+        updateDisplay();
+        document.getElementById('tension-text').innerText = "¡Has tomado la delantera!";
+    }
+
+    function placeManualBid() {
+        const inputVal = parseInt(document.getElementById('customBid').value);
+        if (inputVal > currentPrice) {
+            currentPrice = inputVal;
+            updateDisplay();
+            document.getElementById('customBid').value = '';
+            document.getElementById('tension-text').innerText = "¡Oferta agresiva registrada!";
+        } else {
+            alert("La oferta debe ser superior al precio actual.");
         }
-    }, 1000);
+    }
+
+    // Simular la presencia de 400 personas pujando y entrando/saliendo
+    function simulateNetworkActivity() {
+        // Fluctuación de usuarios en sala
+        setInterval(() => {
+            const change = Math.floor(Math.random() * 5) - 2; // -2 a +2
+            simulatedUsers += change;
+            if(simulatedUsers > 400) simulatedUsers = 400;
+            document.getElementById('user-count').innerText = `👤 ${simulatedUsers} en sala`;
+        }, 3000);
+
+        // Simulador de "Tensión" de otros usuarios
+        setInterval(() => {
+            const randomChance = Math.random();
+            if (randomChance > 0.7) {
+                document.getElementById('tension-text').innerText = "Varios usuarios están escribiendo...";
+                setTimeout(() => {
+                    if(Math.random() > 0.5) {
+                        currentPrice += 1000;
+                        updateDisplay();
+                        document.getElementById('tension-text').innerText = "¡Nueva oferta de otro participante!";
+                    } else {
+                        document.getElementById('tension-text').innerText = "";
+                    }
+                }, 1500);
+            }
+        }, 5000);
+    }
 </script>
 
 </body>
