@@ -14,7 +14,7 @@
         .btn-primary:hover { background: #2563eb; }
 
         /* Sala de Subasta */
-        #auction-room { display: none; width: 90vw; max-width: 1200px; height: 90vh; background: #1e293b; border-radius: 15px; display: none; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.9); }
+        #auction-room { display: none; width: 90vw; max-width: 1200px; height: 90vh; background: #1e293b; border-radius: 15px; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.9); }
         
         .header { display: flex; justify-content: space-between; padding: 20px; background: #0f172a; border-radius: 15px 15px 0 0; align-items: center; }
         .live-indicator { display: flex; align-items: center; gap: 10px; color: #ef4444; font-weight: bold; animation: pulseLive 2s infinite; }
@@ -35,6 +35,102 @@
         .btn-bid:hover { background: #059669; }
         
         .input-manual { width: 100%; padding: 15px; font-size: 1.5rem; text-align: center; border-radius: 8px; border: none; margin-bottom: 10px; box-sizing: border-box; }
+
+        /* 🔥 NUEVOS ESTILOS: Countdown y Winner */
+        .countdown-banner {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 8px;
+            margin: 10px 0;
+            animation: pulseRed 1s infinite;
+            display: none;
+        }
+        @keyframes pulseRed {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            50% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+        }
+
+        .winner-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+        }
+        .winner-card {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            border: 3px solid #10b981;
+            box-shadow: 0 0 60px rgba(16, 185, 129, 0.6);
+        }
+        .winner-card h2 { color: #10b981; font-size: 2.5rem; margin: 0 0 20px; }
+        .winner-price { font-size: 3rem; font-weight: 900; color: white; margin: 20px 0; }
+        .payment-timer {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-size: 1.3rem;
+        }
+        .payment-timer.urgent { color: #ef4444; animation: pulseRed 0.5s infinite; }
+        .btn-confirm {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            transition: 0.3s;
+        }
+        .btn-confirm:hover { background: #059669; transform: scale(1.05); }
+        .btn-cancel {
+            background: #64748b;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .payment-instructions {
+            background: #334155;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            text-align: left;
+            margin: 15px 0;
+        }
+        .payment-instructions code {
+            background: #1e293b;
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #facc15;
+        }
+
+        /* Estado de subasta reiniciada */
+        .restart-notice {
+            background: #7c3aed;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 10px 0;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -64,7 +160,14 @@
         <div class="visual-area">
             <img src="https://via.placeholder.com/600x300/1e293b/ffffff?text=Imagen+del+Producto" alt="Producto" class="product-image">
             <div class="massive-price" id="currentPrice">$ 10.000</div>
+            
+            <!-- 🔥 Countdown de cierre (3 minutos) -->
+            <div class="countdown-banner" id="closing-countdown">
+                ⏱️ CIERRE INMINENTE: <span id="countdown-timer">03:00</span>
+            </div>
+            
             <div id="timer" style="font-size: 2rem; color: #ef4444; font-weight: bold;">00:45</div>
+            <div class="restart-notice" id="restart-notice">🔄 Subasta reiniciada - ¡Nuevas ofertas disponibles!</div>
         </div>
 
         <!-- Panel de Control y Presión -->
@@ -86,23 +189,60 @@
     </div>
 </div>
 
+<!-- 🔥 Modal de Ganador -->
+<div class="winner-modal" id="winner-modal">
+    <div class="winner-card">
+        <h2>🎉 ¡FELICITACIONES!</h2>
+        <p style="font-size: 1.3rem;">Has ganado el <strong>Lote #42</strong></p>
+        <div class="winner-price" id="winner-final-price">$ 10.000</div>
+        
+        <div class="payment-timer" id="payment-timer">
+            ⏰ Tiempo restante para confirmar pago: <strong id="payment-countdown">05:00</strong>
+        </div>
+        
+        <div class="payment-instructions">
+            <strong>📋 Instrucciones de pago:</strong><br>
+            1. Transferir el <strong>30%</strong> del valor final: <code id="payment-amount">$ 3.000</code><br>
+            2. Usar referencia: <code>ARGENTPAY-<span id="winner-ref">XXXX</span></code><br>
+            3. Confirmar transferencia con el botón de abajo
+        </div>
+        
+        <button class="btn-confirm" onclick="confirmPayment()">✅ Ya realicé la transferencia</button>
+        <button class="btn-cancel" onclick="cancelAuction()">❌ Cancelar / Reiniciar</button>
+    </div>
+</div>
+
 <script>
+    // ===== VARIABLES GLOBALES =====
     let currentPrice = 10000;
     let simulatedUsers = 398;
+    let lastBidTime = Date.now();
+    let auctionState = 'active'; // 'active', 'closing', 'won', 'payment_pending', 'restarting'
+    
+    // Timers
+    let closingTimerInterval = null;
+    let paymentTimerInterval = null;
+    let inactivityCheckInterval = null;
+    
+    // Configuración de tiempos (en milisegundos)
+    const INACTIVITY_THRESHOLD = 30000; // 30 segundos sin ofertas para activar countdown
+    const CLOSING_DURATION = 3 * 60 * 1000; // 3 minutos de countdown
+    const PAYMENT_DURATION = 5 * 60 * 1000; // 5 minutos para pagar
 
-    // Transición del login a la sala
+    // ===== FUNCIONES PRINCIPALES =====
+
     function enterRoom() {
         const user = document.getElementById('username').value;
         if(user) {
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('auction-room').style.display = 'flex';
             simulateNetworkActivity();
+            startInactivityMonitor(); // 🔥 Iniciar monitoreo de inactividad
         } else {
             alert("Por favor ingrese un usuario");
         }
     }
 
-    // Efecto de explosión de precio
     function flashPrice() {
         const priceEl = document.getElementById('currentPrice');
         priceEl.classList.add('price-flash');
@@ -112,15 +252,23 @@
     function updateDisplay() {
         document.getElementById('currentPrice').innerText = "$ " + currentPrice.toLocaleString();
         flashPrice();
+        lastBidTime = Date.now(); // 🔥 Actualizar tiempo de última oferta
+        
+        // Si está en modo "closing", resetear countdown al recibir nueva oferta
+        if(auctionState === 'closing') {
+            resetClosingCountdown();
+        }
     }
 
     function placeBid(increment) {
+        if(auctionState !== 'active' && auctionState !== 'closing') return;
         currentPrice += increment;
         updateDisplay();
         document.getElementById('tension-text').innerText = "¡Has tomado la delantera!";
     }
 
     function placeManualBid() {
+        if(auctionState !== 'active' && auctionState !== 'closing') return;
         const inputVal = parseInt(document.getElementById('customBid').value);
         if (inputVal > currentPrice) {
             currentPrice = inputVal;
@@ -132,33 +280,235 @@
         }
     }
 
-    // Simular la presencia de 400 personas pujando y entrando/saliendo
+    // ===== 🔥 SISTEMA DE COUNTDOWN DE CIERRE (3 MIN) =====
+    
+    function startInactivityMonitor() {
+        inactivityCheckInterval = setInterval(() => {
+            const now = Date.now();
+            const timeSinceLastBid = now - lastBidTime;
+            
+            // Si no hay ofertas por INACTIVITY_THRESHOLD y la subasta está activa
+            if(timeSinceLastBid >= INACTIVITY_THRESHOLD && auctionState === 'active') {
+                startClosingCountdown();
+            }
+        }, 1000);
+    }
+
+    function startClosingCountdown() {
+        if(auctionState !== 'active') return;
+        
+        auctionState = 'closing';
+        document.getElementById('closing-countdown').style.display = 'block';
+        document.getElementById('tension-text').innerText = "⚠️ ¡Última oportunidad para ofertar!";
+        
+        let remaining = CLOSING_DURATION;
+        
+        // Actualizar display inmediatamente
+        updateCountdownDisplay(remaining);
+        
+        closingTimerInterval = setInterval(() => {
+            remaining -= 1000;
+            updateCountdownDisplay(remaining);
+            
+            if(remaining <= 0) {
+                clearInterval(closingTimerInterval);
+                declareWinner();
+            }
+        }, 1000);
+    }
+
+    function resetClosingCountdown() {
+        // Si alguien oferta durante el countdown, volvemos a estado activo
+        auctionState = 'active';
+        document.getElementById('closing-countdown').style.display = 'none';
+        document.getElementById('tension-text').innerText = "";
+        if(closingTimerInterval) {
+            clearInterval(closingTimerInterval);
+            closingTimerInterval = null;
+        }
+    }
+
+    function updateCountdownDisplay(milliseconds) {
+        const totalSeconds = Math.ceil(milliseconds / 1000);
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
+        document.getElementById('countdown-timer').innerText = 
+            `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        
+        // Efecto visual cuando queda menos de 30 segundos
+        if(totalSeconds <= 30) {
+            document.getElementById('closing-countdown').style.background = 'linear-gradient(135deg, #dc2626, #b91c1c)';
+            document.getElementById('tension-text').innerText = "🔥 ¡CIERRE INMINENTE!";
+        }
+    }
+
+    // ===== 🔥 SISTEMA DE GANADOR Y PAGO (5 MIN) =====
+    
+    function declareWinner() {
+        auctionState = 'won';
+        clearInterval(inactivityCheckInterval);
+        
+        const winnerModal = document.getElementById('winner-modal');
+        const winnerRef = Math.random().toString(36).substring(2, 8).toUpperCase();
+        
+        document.getElementById('winner-final-price').innerText = "$ " + currentPrice.toLocaleString();
+        document.getElementById('payment-amount').innerText = "$ " + Math.round(currentPrice * 0.3).toLocaleString();
+        document.getElementById('winner-ref').innerText = winnerRef;
+        
+        winnerModal.style.display = 'flex';
+        startPaymentTimer();
+    }
+
+    function startPaymentTimer() {
+        auctionState = 'payment_pending';
+        let remaining = PAYMENT_DURATION;
+        const paymentTimerEl = document.getElementById('payment-countdown');
+        const timerContainer = document.getElementById('payment-timer');
+        
+        updatePaymentDisplay(remaining, paymentTimerEl, timerContainer);
+        
+        paymentTimerInterval = setInterval(() => {
+            remaining -= 1000;
+            updatePaymentDisplay(remaining, paymentTimerEl, timerContainer);
+            
+            if(remaining <= 0) {
+                clearInterval(paymentTimerInterval);
+                handlePaymentTimeout();
+            }
+        }, 1000);
+    }
+
+    function updatePaymentDisplay(milliseconds, element, container) {
+        const totalSeconds = Math.ceil(milliseconds / 1000);
+        const mins = Math.floor(totalSeconds / 60);
+        const secs = totalSeconds % 60;
+        element.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        
+        // Alerta visual cuando queda menos de 1 minuto
+        if(totalSeconds <= 60) {
+            container.classList.add('urgent');
+            document.getElementById('tension-text').innerText = "⚠️ ¡Poco tiempo para confirmar!";
+        }
+    }
+
+    function confirmPayment() {
+        if(auctionState !== 'payment_pending') return;
+        
+        clearInterval(paymentTimerInterval);
+        auctionState = 'completed';
+        
+        document.getElementById('winner-modal').innerHTML = `
+            <div class="winner-card" style="border-color: #3b82f6;">
+                <h2 style="color: #3b82f6;">✅ ¡PAGO CONFIRMADO!</h2>
+                <p style="font-size: 1.2rem;">Tu transacción ha sido registrada exitosamente.</p>
+                <p style="color: #94a3b8;">Recibirás un email con los detalles de envío del Lote #42 en las próximas 24hs.</p>
+                <button class="btn-confirm" onclick="location.reload()">🏠 Volver al inicio</button>
+            </div>
+        `;
+    }
+
+    function cancelAuction() {
+        if(auctionState !== 'payment_pending' && auctionState !== 'won') return;
+        
+        clearInterval(paymentTimerInterval);
+        restartAuction();
+    }
+
+    function handlePaymentTimeout() {
+        auctionState = 'timeout';
+        document.getElementById('winner-modal').innerHTML = `
+            <div class="winner-card" style="border-color: #ef4444;">
+                <h2 style="color: #ef4444;">⏰ TIEMPO AGOTADO</h2>
+                <p style="font-size: 1.2rem;">No se confirmó el pago en el tiempo establecido.</p>
+                <p style="color: #facc15; margin: 20px 0;">La subasta se reiniciará automáticamente...</p>
+                <button class="btn-primary" onclick="restartAuction()">🔄 Reiniciar ahora</button>
+            </div>
+        `;
+        setTimeout(restartAuction, 5000); // Auto-restart en 5 segundos
+    }
+
+    function restartAuction() {
+        // Resetear variables
+        currentPrice = 10000;
+        lastBidTime = Date.now();
+        auctionState = 'active';
+        
+        // Resetear UI
+        document.getElementById('currentPrice').innerText = "$ 10.000";
+        document.getElementById('closing-countdown').style.display = 'none';
+        document.getElementById('winner-modal').style.display = 'none';
+        document.getElementById('restart-notice').style.display = 'block';
+        document.getElementById('tension-text').innerText = "";
+        
+        // Recargar modal para nueva ronda
+        document.getElementById('winner-modal').innerHTML = `
+            <div class="winner-card">
+                <h2>🎉 ¡FELICITACIONES!</h2>
+                <p style="font-size: 1.3rem;">Has ganado el <strong>Lote #42</strong></p>
+                <div class="winner-price" id="winner-final-price">$ 10.000</div>
+                
+                <div class="payment-timer" id="payment-timer">
+                    ⏰ Tiempo restante para confirmar pago: <strong id="payment-countdown">05:00</strong>
+                </div>
+                
+                <div class="payment-instructions">
+                    <strong>📋 Instrucciones de pago:</strong><br>
+                    1. Transferir el <strong>30%</strong> del valor final: <code id="payment-amount">$ 3.000</code><br>
+                    2. Usar referencia: <code>ARGENTPAY-<span id="winner-ref">XXXX</span></code><br>
+                    3. Confirmar transferencia con el botón de abajo
+                </div>
+                
+                <button class="btn-confirm" onclick="confirmPayment()">✅ Ya realicé la transferencia</button>
+                <button class="btn-cancel" onclick="cancelAuction()">❌ Cancelar / Reiniciar</button>
+            </div>
+        `;
+        
+        // Ocultar notice después de 5 segundos
+        setTimeout(() => {
+            document.getElementById('restart-notice').style.display = 'none';
+        }, 5000);
+        
+        // Reiniciar monitoreo
+        startInactivityMonitor();
+    }
+
+    // ===== SIMULACIÓN DE ACTIVIDAD DE RED =====
     function simulateNetworkActivity() {
         // Fluctuación de usuarios en sala
         setInterval(() => {
-            const change = Math.floor(Math.random() * 5) - 2; // -2 a +2
+            const change = Math.floor(Math.random() * 5) - 2;
             simulatedUsers += change;
             if(simulatedUsers > 400) simulatedUsers = 400;
+            if(simulatedUsers < 50) simulatedUsers = 50;
             document.getElementById('user-count').innerText = `👤 ${simulatedUsers} en sala`;
         }, 3000);
 
-        // Simulador de "Tensión" de otros usuarios
+        // Simulador de "Tensión" de otros usuarios (solo si subasta está activa/closing)
         setInterval(() => {
+            if(auctionState !== 'active' && auctionState !== 'closing') return;
+            
             const randomChance = Math.random();
             if (randomChance > 0.7) {
                 document.getElementById('tension-text').innerText = "Varios usuarios están escribiendo...";
                 setTimeout(() => {
-                    if(Math.random() > 0.5) {
+                    if(Math.random() > 0.5 && auctionState === 'active') {
                         currentPrice += 1000;
                         updateDisplay();
                         document.getElementById('tension-text').innerText = "¡Nueva oferta de otro participante!";
                     } else {
-                        document.getElementById('tension-text').innerText = "";
+                        if(auctionState === 'active') document.getElementById('tension-text').innerText = "";
                     }
                 }, 1500);
             }
         }, 5000);
     }
+
+    // ===== CLEANUP (Buena práctica) =====
+    window.addEventListener('beforeunload', () => {
+        if(closingTimerInterval) clearInterval(closingTimerInterval);
+        if(paymentTimerInterval) clearInterval(paymentTimerInterval);
+        if(inactivityCheckInterval) clearInterval(inactivityCheckInterval);
+    });
 </script>
 
 </body>
