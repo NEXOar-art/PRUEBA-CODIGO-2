@@ -16,104 +16,88 @@
             --black-tertiary: #1a1a1a;
             --black-card: #141414;
             --white-glow: rgba(255, 215, 0, 0.3);
-            --gold-glow: rgba(255, 193, 7, 0.5);
+            --gold-glow: rgba(255, 193, 7, 0.6);
             --success-green: #10b981;
             --error-red: #ef4444;
             --warning-orange: #f59e0b;
         }
 
-        /* ===== BACKGROUND ANIMADO DE SUBASTA - OPACIDAD 100% ===== */
+        /* ===== RESET Y BASE ===== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body { 
-            font-family: 'Segoe UI', 'Arial', sans-serif; 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
             background-color: var(--black-primary); 
             color: var(--gold-primary); 
             display: flex; 
             justify-content: center; 
             align-items: center; 
             min-height: 100vh; 
-            margin: 0; 
             overflow-x: hidden;
             position: relative;
+            line-height: 1.5;
         }
 
-        /* Background con imagen de subasta - SIN OPACIDAD */
+        /* ===== BACKGROUND ANIMADO - OPACIDAD 100% ===== */
         body::before {
             content: '';
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: 
-                url('https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1920&q=80');
+            background: url('https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            animation: bgPan 35s linear infinite alternate, bgPulse 10s ease-in-out infinite;
+            animation: bgPan 40s linear infinite alternate, bgPulse 12s ease-in-out infinite;
             z-index: -3;
-            /* 🔥 OPACIDAD 100% - Sin filtros oscuros */
             filter: none;
             opacity: 1;
         }
 
-        /* Overlay dorado sutil para legibilidad */
         body::after {
             content: '';
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: 
-                radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%),
+                radial-gradient(ellipse at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.75) 100%),
                 radial-gradient(var(--gold-glow) 1px, transparent 1px),
                 radial-gradient(var(--gold-glow) 1px, transparent 1px);
-            background-size: 100% 100%, 60px 60px, 85px 85px;
-            background-position: 0 0, 0 0, 30px 30px;
-            opacity: 0.25;
+            background-size: 100% 100%, 65px 65px, 90px 90px;
+            background-position: 0 0, 0 0, 32px 32px;
+            opacity: 0.22;
             z-index: -2;
-            animation: particlesFloat 25s linear infinite;
+            animation: particlesFloat 28s linear infinite;
             pointer-events: none;
         }
 
-        @keyframes bgPan {
-            0% { background-position: center center; }
-            100% { background-position: center 115%; }
-        }
-        @keyframes bgPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-        @keyframes particlesFloat {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(-60px) rotate(3deg); }
-        }
+        @keyframes bgPan { 0% { background-position: center center; } 100% { background-position: center 120%; } }
+        @keyframes bgPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        @keyframes particlesFloat { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-70px) rotate(4deg); } }
 
-        /* ===== EFECTOS Y MICRO-EFECTOS GLOBALES ===== */
-        * { box-sizing: border-box; }
-        
-        *::selection {
-            background: var(--gold-primary);
-            color: var(--black-primary);
-        }
+        /* ===== EFECTOS GLOBALES Y MICRO-EFECTOS ===== */
+        *::selection { background: var(--gold-primary); color: var(--black-primary); }
 
+        .hover-glow {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, box-shadow;
+        }
         .hover-glow:hover {
-            box-shadow: 0 0 30px var(--gold-glow), 0 0 60px var(--white-glow);
-            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 0 35px var(--gold-glow), 0 0 70px var(--white-glow);
+            transform: translateY(-4px) scale(1.04);
             cursor: pointer;
         }
 
-        .pulse-gold {
-            animation: pulseGold 2.5s infinite;
-        }
+        .pulse-gold { animation: pulseGold 2.5s infinite; }
         @keyframes pulseGold {
             0%, 100% { box-shadow: 0 0 0 0 var(--gold-glow); }
-            50% { box-shadow: 0 0 0 15px rgba(255, 193, 7, 0); }
+            50% { box-shadow: 0 0 0 18px rgba(255, 193, 7, 0); }
         }
 
         .text-glow {
-            text-shadow: 0 0 12px var(--gold-glow), 0 0 30px var(--gold-primary), 0 0 50px var(--gold-secondary);
+            text-shadow: 0 0 15px var(--gold-glow), 0 0 35px var(--gold-primary), 0 0 60px var(--gold-secondary);
         }
 
-        .float-effect { animation: float 4s ease-in-out infinite; }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
+        .float-effect { animation: float 4.5s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 
         .shine-effect {
             position: relative;
@@ -123,9 +107,9 @@
             content: '';
             position: absolute;
             top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.25), transparent);
             transform: rotate(30deg);
-            animation: shine 4s infinite;
+            animation: shine 4.5s infinite;
             pointer-events: none;
         }
         @keyframes shine {
@@ -142,13 +126,82 @@
             position: absolute;
             top: 50%; left: 50%;
             width: 0; height: 0;
-            background: rgba(255,215,0,0.4);
+            background: rgba(255,215,0,0.5);
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            animation: ripple 0.6s ease-out;
+            animation: ripple 0.65s ease-out;
         }
-        @keyframes ripple {
-            to { width: 300px; height: 300px; opacity: 0; }
+        @keyframes ripple { to { width: 350px; height: 350px; opacity: 0; } }
+
+        /* Botones estilo shadcn-inspired con animaciones modernas */
+        .btn-modern {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border-radius: 16px;
+            border: none;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary));
+            color: var(--black-primary);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 0 var(--gold-glow);
+        }
+        
+        .btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn-modern:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 12px 45px var(--gold-glow), 0 0 0 3px rgba(255,215,0,0.2);
+        }
+        
+        .btn-modern:hover::before { left: 100%; }
+        
+        .btn-modern:active {
+            transform: translateY(-1px) scale(1.01);
+            transition-duration: 0.1s;
+        }
+
+        .btn-modern-secondary {
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            color: var(--gold-primary);
+            border: 2px solid var(--gold-dark);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .btn-modern-secondary:hover {
+            border-color: var(--gold-primary);
+            background: linear-gradient(135deg, #3a3a3a, #252525);
+            box-shadow: 0 10px 35px rgba(255,215,0,0.3);
+        }
+
+        .btn-modern-danger {
+            background: linear-gradient(135deg, var(--error-red), #dc2626);
+            color: white;
+        }
+        .btn-modern-danger:hover {
+            box-shadow: 0 12px 40px rgba(239, 68, 68, 0.5);
+        }
+
+        .btn-modern-success {
+            background: linear-gradient(135deg, var(--success-green), #059669);
+            color: white;
+        }
+        .btn-modern-success:hover {
+            box-shadow: 0 12px 40px rgba(16, 185, 129, 0.5);
         }
 
         /* ===== PÁGINAS / VISTAS ===== */
@@ -159,11 +212,11 @@
             padding: 20px;
             position: relative;
             z-index: 10;
-            animation: pageFadeIn 0.4s ease;
+            animation: pageFadeIn 0.45s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .page.active { display: flex; }
         @keyframes pageFadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(25px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -177,178 +230,133 @@
 
         #auth-screen { 
             background: linear-gradient(145deg, var(--black-card), var(--black-tertiary)); 
-            padding: 45px 50px; 
-            border-radius: 24px; 
+            padding: 50px 55px; 
+            border-radius: 28px; 
             width: 100%;
-            max-width: 420px; 
-            box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 50px var(--gold-glow);
-            border: 3px solid var(--gold-dark);
+            max-width: 450px; 
+            box-shadow: 0 25px 70px rgba(0,0,0,0.95), 0 0 60px var(--gold-glow);
+            border: 4px solid var(--gold-dark);
             position: relative;
         }
         
         #auth-screen::before {
             content: '🔨 ARGENTPLAY';
             position: absolute;
-            top: -15px;
+            top: -18px;
             left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary));
             color: var(--black-primary);
-            padding: 6px 24px;
-            border-radius: 25px;
-            font-size: 0.85rem;
+            padding: 8px 28px;
+            border-radius: 30px;
+            font-size: 0.9rem;
             font-weight: 900;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             text-shadow: none;
-            box-shadow: 0 5px 20px var(--gold-glow);
+            box-shadow: 0 6px 25px var(--gold-glow);
+            animation: float 3s ease-in-out infinite;
         }
 
         .auth-title {
             color: var(--gold-primary);
-            font-size: 1.8rem;
-            margin: 25px 0 10px;
-            text-shadow: 0 0 15px var(--gold-glow);
+            font-size: 2rem;
+            margin: 30px 0 12px;
+            text-shadow: 0 0 18px var(--gold-glow);
         }
 
         .auth-subtitle {
-            color: rgba(255,215,0,0.75);
-            font-size: 0.95rem;
-            margin-bottom: 30px;
+            color: rgba(255,215,0,0.8);
+            font-size: 1rem;
+            margin-bottom: 35px;
         }
 
         .auth-input { 
             width: 100%; 
-            padding: 16px 20px; 
-            margin: 14px 0; 
-            border-radius: 12px; 
-            border: 2px solid var(--gold-dark); 
+            padding: 18px 22px; 
+            margin: 16px 0; 
+            border-radius: 14px; 
+            border: 2.5px solid var(--gold-dark); 
             background: var(--black-tertiary); 
             color: var(--gold-primary); 
-            font-size: 1rem;
-            transition: all 0.25s;
+            font-size: 1.05rem;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .auth-input:focus {
             outline: none;
             border-color: var(--gold-primary);
-            box-shadow: 0 0 20px var(--gold-glow);
-            transform: scale(1.02);
+            box-shadow: 0 0 25px var(--gold-glow);
+            transform: scale(1.025);
+            background: linear-gradient(145deg, #1f1f1f, #141414);
         }
-        .auth-input::placeholder { color: rgba(255, 215, 0, 0.5); }
-
-        .btn-primary { 
-            background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary)); 
-            color: var(--black-primary);
-            width: 100%; 
-            padding: 16px; 
-            border: none; 
-            border-radius: 14px; 
-            font-weight: 900; 
-            cursor: pointer; 
-            font-size: 1.1rem;
-            letter-spacing: 1px;
-            margin-top: 10px;
-            position: relative;
-            overflow: hidden;
-            text-transform: uppercase;
-        }
-        .btn-primary:hover { 
-            background: linear-gradient(135deg, var(--gold-secondary), var(--gold-light));
-            box-shadow: 0 10px 35px var(--gold-glow);
-            transform: translateY(-3px);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
-            color: var(--gold-primary);
-            border: 2px solid var(--gold-dark);
-            padding: 12px 25px;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
-            font-size: 0.95rem;
-        }
-        .btn-secondary:hover {
-            border-color: var(--gold-primary);
-            background: linear-gradient(135deg, #3a3a3a, #252525);
-            transform: translateY(-2px);
-        }
-
-        .admin-link {
-            color: rgba(255,215,0,0.6);
-            font-size: 0.85rem;
-            margin-top: 25px;
-            cursor: pointer;
-            text-decoration: underline;
-            transition: color 0.2s;
-        }
-        .admin-link:hover { color: var(--gold-primary); }
+        .auth-input::placeholder { color: rgba(255, 215, 0, 0.55); }
 
         /* ===== PÁGINA 2: MATRIZ DE 50 LOTES ===== */
         #lots-page {
             flex-direction: column;
             align-items: center;
-            padding: 30px 20px;
+            padding: 35px 25px;
         }
 
         .page-header {
             text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
+            margin-bottom: 35px;
+            padding: 25px 30px;
             background: linear-gradient(145deg, var(--black-card), var(--black-tertiary));
-            border-radius: 20px;
-            border: 2px solid var(--gold-dark);
-            max-width: 900px;
+            border-radius: 24px;
+            border: 3px solid var(--gold-dark);
+            max-width: 950px;
             width: 100%;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+            box-shadow: 0 12px 45px rgba(0,0,0,0.75);
         }
         .page-header h1 {
             color: var(--gold-primary);
-            margin: 0 0 10px;
-            font-size: 2rem;
-            text-shadow: 0 0 15px var(--gold-glow);
+            margin: 0 0 12px;
+            font-size: 2.2rem;
+            text-shadow: 0 0 18px var(--gold-glow);
         }
-        .page-header p { color: rgba(255,215,0,0.8); margin: 0; }
+        .page-header p { color: rgba(255,215,0,0.85); margin: 0; font-size: 1.05rem; }
 
         .user-info-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: var(--black-tertiary);
-            padding: 12px 25px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            border: 1px solid var(--gold-dark);
-            max-width: 900px;
+            padding: 14px 28px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            border: 2px solid var(--gold-dark);
+            max-width: 950px;
             width: 100%;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
         }
         .user-id-badge {
-            background: var(--gold-primary);
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary));
             color: var(--black-primary);
-            padding: 6px 18px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.95rem;
-            letter-spacing: 1px;
+            padding: 8px 22px;
+            border-radius: 25px;
+            font-weight: 800;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 20px var(--gold-glow);
+            animation: pulseGold 3s infinite;
         }
 
-        /* Grid de 50 lotes */
         .lots-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 18px;
-            max-width: 1400px;
+            grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+            gap: 22px;
+            max-width: 1450px;
             width: 100%;
-            padding: 10px;
+            padding: 15px;
         }
 
         .lot-card {
             background: linear-gradient(145deg, var(--black-card), var(--black-tertiary));
-            border-radius: 16px;
-            padding: 18px;
+            border-radius: 20px;
+            padding: 22px;
             text-align: center;
-            border: 2px solid var(--gold-dark);
-            transition: all 0.3s ease;
+            border: 3px solid var(--gold-dark);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
@@ -356,190 +364,212 @@
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--gold-primary), var(--gold-secondary));
+            height: 5px;
+            background: linear-gradient(90deg, var(--gold-primary), var(--gold-secondary), var(--gold-light));
+            animation: borderGlow 4s ease infinite;
+        }
+        @keyframes borderGlow {
+            0%, 100% { opacity: 1; } 50% { opacity: 0.7; }
         }
         .lot-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 30px var(--gold-glow);
+            transform: translateY(-7px);
+            box-shadow: 0 20px 55px rgba(0,0,0,0.85), 0 0 40px var(--gold-glow);
             border-color: var(--gold-primary);
         }
 
         .lot-status {
             position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 14px;
-            height: 14px;
+            top: 15px;
+            right: 15px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            border: 2px solid var(--black-primary);
+            border: 2.5px solid var(--black-primary);
+            z-index: 2;
         }
         .lot-status.active { 
             background: var(--success-green); 
-            box-shadow: 0 0 15px var(--success-green);
-            animation: pulseLive 1.5s infinite;
+            box-shadow: 0 0 20px var(--success-green);
+            animation: pulseLive 1.8s infinite;
         }
         .lot-status.inactive { 
             background: var(--error-red); 
-            box-shadow: 0 0 10px var(--error-red);
+            box-shadow: 0 0 15px var(--error-red);
         }
         @keyframes pulseLive {
             0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.8; }
+            50% { transform: scale(1.35); opacity: 0.85; }
         }
 
         .lot-number {
             color: var(--gold-secondary);
-            font-size: 0.85rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
         }
 
         .lot-image {
             width: 100%;
-            height: 130px;
+            height: 145px;
             object-fit: cover;
-            border-radius: 10px;
-            border: 2px solid var(--gold-dark);
-            margin: 10px 0;
+            border-radius: 14px;
+            border: 3px solid var(--gold-dark);
+            margin: 12px 0;
             background: var(--black-tertiary);
+            transition: transform 0.3s ease;
         }
+        .lot-card:hover .lot-image { transform: scale(1.05); }
 
         .lot-name {
-            font-weight: bold;
-            font-size: 1rem;
-            margin: 8px 0;
-            min-height: 40px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin: 10px 0;
+            min-height: 45px;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            color: var(--gold-light);
         }
 
         .lot-base {
             color: var(--gold-primary);
-            font-size: 1.3rem;
+            font-size: 1.45rem;
             font-weight: 900;
-            margin: 5px 0;
-            text-shadow: 0 0 10px var(--gold-glow);
+            margin: 8px 0;
+            text-shadow: 0 0 12px var(--gold-glow);
+            letter-spacing: -0.5px;
         }
 
         .lot-commission {
-            color: rgba(255,215,0,0.7);
-            font-size: 0.8rem;
-            margin: 5px 0 15px;
+            color: rgba(255,215,0,0.75);
+            font-size: 0.85rem;
+            margin: 8px 0 18px;
+            line-height: 1.4;
         }
 
         .btn-enter-lot {
             background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary));
             color: var(--black-primary);
             border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: bold;
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-weight: 800;
             cursor: pointer;
             width: 100%;
-            font-size: 0.95rem;
-            transition: all 0.25s;
+            font-size: 1rem;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-enter-lot::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+            transition: left 0.45s ease;
         }
         .btn-enter-lot:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px var(--gold-glow);
+            transform: scale(1.06);
+            box-shadow: 0 10px 30px var(--gold-glow);
         }
+        .btn-enter-lot:hover::after { left: 100%; }
         .btn-enter-lot:disabled {
-            background: #333;
-            color: #666;
+            background: #2a2a2a;
+            color: #555;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
         /* ===== PÁGINA 3: SALA DE SUBASTA ===== */
         #auction-page {
             flex-direction: column;
             align-items: center;
-            padding: 15px;
+            padding: 18px;
         }
 
         #auction-room { 
             width: 100%;
-            max-width: 1300px; 
-            min-height: 85vh;
+            max-width: 1350px; 
+            min-height: 88vh;
             background: linear-gradient(145deg, var(--black-card), var(--black-tertiary)); 
-            border-radius: 24px; 
+            border-radius: 28px; 
             flex-direction: column; 
-            box-shadow: 0 25px 70px rgba(0,0,0,0.95), 0 0 70px var(--gold-glow);
-            border: 4px solid var(--gold-dark);
+            box-shadow: 0 30px 85px rgba(0,0,0,0.95), 0 0 85px var(--gold-glow);
+            border: 5px solid var(--gold-dark);
             position: relative;
             overflow: hidden;
         }
 
-        /* Borde dorado animado */
         #auction-room::before {
             content: '';
             position: absolute;
-            top: -4px; left: -4px; right: -4px; bottom: -4px;
+            top: -5px; left: -5px; right: -5px; bottom: -5px;
             background: linear-gradient(45deg, var(--gold-primary), var(--gold-secondary), var(--gold-dark), var(--gold-primary));
-            background-size: 400% 400%;
-            border-radius: 28px;
+            background-size: 450% 450%;
+            border-radius: 33px;
             z-index: -1;
-            animation: borderGlow 5s ease infinite;
-            opacity: 0.8;
-        }
-        @keyframes borderGlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            animation: borderGlow 6s ease infinite;
+            opacity: 0.85;
         }
         
         .auction-header { 
             display: flex; 
             justify-content: space-between; 
-            padding: 20px 30px; 
+            padding: 22px 35px; 
             background: linear-gradient(90deg, var(--black-tertiary), var(--black-card)); 
-            border-radius: 20px 20px 0 0; 
+            border-radius: 23px 23px 0 0; 
             align-items: center;
-            border-bottom: 3px solid var(--gold-dark);
+            border-bottom: 4px solid var(--gold-dark);
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 18px;
         }
         
         .lot-header-info h2 {
             margin: 0;
             color: var(--gold-primary);
-            text-shadow: 0 0 12px var(--gold-glow);
-            font-size: 1.5rem;
+            text-shadow: 0 0 15px var(--gold-glow);
+            font-size: 1.65rem;
+            font-weight: 800;
         }
         .lot-header-info span {
             color: var(--gold-secondary);
-            font-size: 1rem;
+            font-size: 1.05rem;
+            font-weight: 600;
         }
         
         .live-indicator { 
             display: flex; 
             align-items: center; 
-            gap: 12px; 
+            gap: 14px; 
             color: var(--gold-primary); 
-            font-weight: bold; 
-            animation: pulseLive 1.5s infinite;
-            text-shadow: 0 0 10px var(--gold-glow);
+            font-weight: 800; 
+            animation: pulseLive 1.8s infinite;
+            text-shadow: 0 0 12px var(--gold-glow);
             background: var(--black-tertiary);
-            padding: 10px 20px;
-            border-radius: 25px;
-            border: 2px solid var(--gold-dark);
+            padding: 12px 24px;
+            border-radius: 30px;
+            border: 3px solid var(--gold-dark);
+            font-size: 1.05rem;
         }
         
         .auction-main { 
             display: flex; 
             flex: 1; 
-            padding: 25px 30px; 
-            gap: 30px;
+            padding: 28px 35px; 
+            gap: 35px;
             flex-wrap: wrap;
         }
         
         .visual-area { 
             flex: 1; 
-            min-width: 300px;
+            min-width: 320px;
             display: flex; 
             flex-direction: column; 
             align-items: center; 
@@ -548,189 +578,207 @@
         }
         
         .product-image { 
-            width: 90%; 
-            max-height: 350px; 
+            width: 92%; 
+            max-height: 370px; 
             object-fit: cover; 
-            border-radius: 20px; 
-            border: 4px solid var(--gold-dark);
-            box-shadow: 0 15px 50px rgba(0,0,0,0.8);
+            border-radius: 24px; 
+            border: 5px solid var(--gold-dark);
+            box-shadow: 0 18px 60px rgba(0,0,0,0.85);
             position: relative;
-            animation: float 5s ease-in-out infinite;
+            animation: float 5.5s ease-in-out infinite;
         }
         .product-image::after {
             content: '🔍 Lote Premium';
             position: absolute;
-            bottom: 20px;
-            right: 20px;
+            bottom: 22px;
+            right: 22px;
             background: var(--gold-primary);
             color: var(--black-primary);
-            padding: 8px 18px;
-            border-radius: 25px;
-            font-size: 0.85rem;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.9rem;
             font-weight: 900;
-            box-shadow: 0 5px 20px var(--gold-glow);
+            box-shadow: 0 6px 25px var(--gold-glow);
             letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
         
         .massive-price { 
-            font-size: 6rem; 
+            font-size: 6.5rem; 
             font-weight: 900; 
             color: var(--gold-primary); 
-            margin: 25px 0 15px; 
-            text-shadow: 0 0 25px var(--gold-glow), 0 0 60px var(--gold-primary); 
-            transition: transform 0.15s, color 0.3s, text-shadow 0.3s;
-            letter-spacing: -4px;
+            margin: 28px 0 18px; 
+            text-shadow: 0 0 30px var(--gold-glow), 0 0 75px var(--gold-primary); 
+            transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s, text-shadow 0.3s;
+            letter-spacing: -5px;
             position: relative;
-            line-height: 1;
+            line-height: 0.95;
         }
         .massive-price::before {
             content: '$';
             position: absolute;
-            left: -30px;
-            top: 8px;
-            font-size: 3.5rem;
-            opacity: 0.9;
+            left: -35px;
+            top: 10px;
+            font-size: 4rem;
+            opacity: 0.92;
         }
         .price-flash { 
-            transform: scale(1.18) !important; 
+            transform: scale(1.22) !important; 
             color: var(--gold-secondary) !important; 
-            text-shadow: 0 0 40px var(--gold-glow), 0 0 100px var(--gold-primary) !important;
+            text-shadow: 0 0 50px var(--gold-glow), 0 0 120px var(--gold-primary) !important;
         }
         
-        /* Desglose de comisiones */
         .commission-breakdown {
             background: linear-gradient(145deg, var(--black-tertiary), var(--black-card));
-            padding: 15px 25px;
-            border-radius: 14px;
-            margin: 10px 0;
-            border: 2px solid var(--gold-dark);
-            width: 90%;
-            max-width: 400px;
+            padding: 18px 28px;
+            border-radius: 18px;
+            margin: 12px 0;
+            border: 3px solid var(--gold-dark);
+            width: 92%;
+            max-width: 420px;
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.4);
         }
         .commission-breakdown h4 {
-            margin: 0 0 10px;
+            margin: 0 0 12px;
             color: var(--gold-secondary);
-            font-size: 0.95rem;
+            font-size: 1rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--gold-dark);
+            padding-bottom: 10px;
         }
         .commission-row {
             display: flex;
             justify-content: space-between;
-            padding: 5px 0;
-            font-size: 0.9rem;
+            padding: 6px 0;
+            font-size: 0.95rem;
+            font-weight: 500;
         }
         .commission-row.platform { color: var(--gold-light); }
         .commission-row.seller { color: var(--gold-secondary); }
         .commission-row.total {
-            border-top: 1px solid var(--gold-dark);
-            margin-top: 8px;
-            padding-top: 8px;
-            font-weight: bold;
+            border-top: 2px solid var(--gold-dark);
+            margin-top: 10px;
+            padding-top: 12px;
+            font-weight: 900;
             color: var(--gold-primary);
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
         
         .control-area { 
-            width: 380px; 
-            min-width: 320px;
+            width: 400px; 
+            min-width: 340px;
             background: linear-gradient(145deg, var(--black-tertiary), var(--black-card)); 
-            padding: 28px; 
-            border-radius: 20px; 
+            padding: 32px; 
+            border-radius: 24px; 
             display: flex; 
             flex-direction: column; 
             justify-content: space-between;
-            border: 3px solid var(--gold-dark);
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+            border: 4px solid var(--gold-dark);
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.65);
         }
         
         .tension-msg { 
             color: var(--gold-secondary); 
             font-style: italic; 
-            font-size: 1rem; 
+            font-size: 1.05rem; 
             text-align: center; 
-            min-height: 26px;
-            text-shadow: 0 0 10px var(--gold-glow);
-            margin: 10px 0;
-            font-weight: 500;
+            min-height: 30px;
+            text-shadow: 0 0 12px var(--gold-glow);
+            margin: 12px 0;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
         
         .btn-bid { 
             background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary)); 
             color: var(--black-primary); 
             border: none; 
-            padding: 18px; 
-            font-size: 1.3rem; 
+            padding: 20px; 
+            font-size: 1.4rem; 
             font-weight: 900; 
-            border-radius: 14px; 
+            border-radius: 18px; 
             cursor: pointer; 
-            margin-bottom: 14px; 
+            margin-bottom: 16px; 
             position: relative;
             overflow: hidden;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-bid::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.4s ease;
         }
         .btn-bid:hover { 
             background: linear-gradient(135deg, var(--gold-secondary), var(--gold-light));
-            box-shadow: 0 8px 30px var(--gold-glow);
-            transform: translateY(-3px);
+            box-shadow: 0 10px 35px var(--gold-glow);
+            transform: translateY(-4px);
         }
+        .btn-bid:hover::after { left: 100%; }
         
         .input-manual { 
             width: 100%; 
-            padding: 18px; 
-            font-size: 1.7rem; 
+            padding: 20px; 
+            font-size: 1.85rem; 
             text-align: center; 
-            border-radius: 14px; 
-            border: 3px solid var(--gold-dark); 
-            margin: 14px 0; 
+            border-radius: 18px; 
+            border: 4px solid var(--gold-dark); 
+            margin: 16px 0; 
             background: var(--black-tertiary);
             color: var(--gold-primary);
             font-weight: 900;
+            transition: all 0.28s ease;
         }
         .input-manual:focus {
             outline: none;
             border-color: var(--gold-primary);
-            box-shadow: 0 0 25px var(--gold-glow);
+            box-shadow: 0 0 30px var(--gold-glow);
+            transform: scale(1.02);
+            background: linear-gradient(145deg, #1f1f1f, #141414);
         }
 
-        /* ===== COUNTDOWN DE CIERRE ===== */
         .countdown-banner {
             background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
             color: var(--black-primary);
             text-align: center;
-            padding: 18px 25px;
-            font-size: 1.5rem;
+            padding: 20px 28px;
+            font-size: 1.65rem;
             font-weight: 900;
-            border-radius: 14px;
-            margin: 15px 0;
-            animation: pulseRed 1s infinite;
+            border-radius: 18px;
+            margin: 18px 0;
+            animation: pulseRed 1.1s infinite;
             display: none;
-            border: 3px solid var(--black-primary);
-            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            letter-spacing: 1px;
-            width: 90%;
-            max-width: 450px;
+            border: 4px solid var(--black-primary);
+            text-shadow: 0 3px 6px rgba(0,0,0,0.35);
+            letter-spacing: 1.5px;
+            width: 92%;
+            max-width: 480px;
         }
         @keyframes pulseRed {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.9); transform: scale(1); }
-            50% { box-shadow: 0 0 0 22px rgba(255, 193, 7, 0); transform: scale(1.03); }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.95); transform: scale(1); }
+            50% { box-shadow: 0 0 0 26px rgba(255, 193, 7, 0); transform: scale(1.04); }
         }
 
         .restart-notice {
             background: linear-gradient(135deg, var(--gold-dark), var(--gold-primary));
             color: var(--black-primary);
-            padding: 14px 25px;
-            border-radius: 14px;
+            padding: 16px 28px;
+            border-radius: 18px;
             text-align: center;
-            margin: 15px 0;
+            margin: 18px 0;
             display: none;
-            font-weight: bold;
-            animation: slideIn 0.4s ease;
-            border: 2px solid var(--black-primary);
-            width: 90%;
-            max-width: 450px;
+            font-weight: 800;
+            animation: slideIn 0.45s ease;
+            border: 3px solid var(--black-primary);
+            width: 92%;
+            max-width: 480px;
         }
         @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-15px); }
+            from { opacity: 0; transform: translateY(-18px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -738,191 +786,204 @@
         .winner-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.97);
+            background: rgba(0,0,0,0.98);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 2000;
             flex-direction: column;
-            backdrop-filter: blur(10px);
-            padding: 20px;
+            backdrop-filter: blur(12px);
+            padding: 25px;
         }
         
         .winner-card {
             background: linear-gradient(145deg, var(--black-card), var(--black-tertiary));
-            padding: 40px 45px;
-            border-radius: 28px;
+            padding: 45px 50px;
+            border-radius: 32px;
             text-align: center;
-            max-width: 580px;
+            max-width: 620px;
             width: 100%;
-            border: 5px solid var(--gold-primary);
-            box-shadow: 0 0 100px var(--gold-glow), 0 30px 80px rgba(0,0,0,0.95);
+            border: 6px solid var(--gold-primary);
+            box-shadow: 0 0 120px var(--gold-glow), 0 35px 90px rgba(0,0,0,0.97);
             position: relative;
-            animation: modalPop 0.5s ease-out;
+            animation: modalPop 0.55s cubic-bezier(0.4, 0, 0.2, 1);
         }
         @keyframes modalPop {
-            0% { transform: scale(0.75); opacity: 0; }
+            0% { transform: scale(0.7); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
         
         .winner-card::before {
             content: '🏆';
             position: absolute;
-            top: -30px;
+            top: -35px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 4rem;
-            animation: float 2.5s ease-in-out infinite;
-            text-shadow: 0 0 30px var(--gold-glow);
+            font-size: 4.5rem;
+            animation: float 2.8s ease-in-out infinite;
+            text-shadow: 0 0 35px var(--gold-glow);
         }
         
         .winner-card h2 { 
             color: var(--gold-primary); 
-            font-size: 2.2rem; 
-            margin: 20px 0 10px; 
-            text-shadow: 0 0 20px var(--gold-glow);
+            font-size: 2.4rem; 
+            margin: 25px 0 12px; 
+            text-shadow: 0 0 25px var(--gold-glow);
+            font-weight: 900;
         }
         
         .winner-id {
             background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary));
             color: var(--black-primary);
-            padding: 10px 25px;
-            border-radius: 30px;
+            padding: 12px 28px;
+            border-radius: 35px;
             font-weight: 900;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             display: inline-block;
-            margin: 12px 0;
-            letter-spacing: 2px;
-            box-shadow: 0 6px 25px var(--gold-glow);
+            margin: 15px 0;
+            letter-spacing: 3px;
+            box-shadow: 0 8px 30px var(--gold-glow);
+            animation: pulseGold 2.5s infinite;
         }
         
         .winner-price { 
-            font-size: 4rem; 
+            font-size: 4.5rem; 
             font-weight: 900; 
             color: var(--gold-primary); 
-            margin: 20px 0; 
-            text-shadow: 0 0 30px var(--gold-glow);
-            letter-spacing: -3px;
-            line-height: 1;
+            margin: 25px 0; 
+            text-shadow: 0 0 35px var(--gold-glow);
+            letter-spacing: -4px;
+            line-height: 0.95;
         }
-        .winner-price::before { content: '$ '; font-size: 2.5rem; }
+        .winner-price::before { content: '$ '; font-size: 3rem; }
         
         .payment-section {
             background: linear-gradient(145deg, var(--black-tertiary), var(--black-card));
-            padding: 25px;
-            border-radius: 18px;
-            margin: 25px 0;
-            border: 3px solid var(--gold-dark);
+            padding: 28px;
+            border-radius: 22px;
+            margin: 28px 0;
+            border: 4px solid var(--gold-dark);
+            box-shadow: inset 0 0 35px rgba(0,0,0,0.5);
         }
         
         .payment-timer {
-            font-size: 1.5rem;
-            margin: 15px 0;
-            padding: 15px;
+            font-size: 1.65rem;
+            margin: 18px 0;
+            padding: 18px;
             background: var(--black-card);
-            border-radius: 12px;
-            border-left: 5px solid var(--gold-primary);
+            border-radius: 16px;
+            border-left: 6px solid var(--gold-primary);
+            font-weight: 600;
         }
         .payment-timer.urgent { 
             color: var(--gold-secondary); 
-            animation: pulseUrgent 0.7s infinite; 
+            animation: pulseUrgent 0.75s infinite; 
             border-left-color: var(--gold-secondary);
         }
         @keyframes pulseUrgent {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
-            50% { box-shadow: 0 0 0 25px rgba(255, 193, 7, 0); }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.75); }
+            50% { box-shadow: 0 0 0 30px rgba(255, 193, 7, 0); }
         }
         
         .payment-split {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 20px 0;
+            gap: 18px;
+            margin: 25px 0;
         }
         .payment-item {
             background: var(--black-card);
-            padding: 15px;
-            border-radius: 12px;
-            border: 2px solid var(--gold-dark);
+            padding: 18px;
+            border-radius: 16px;
+            border: 3px solid var(--gold-dark);
+            transition: transform 0.25s ease;
         }
+        .payment-item:hover { transform: translateY(-3px); }
         .payment-item.platform { border-color: var(--gold-light); }
         .payment-item.seller { border-color: var(--gold-secondary); }
         .payment-item h4 {
-            margin: 0 0 8px;
-            font-size: 0.95rem;
-            color: rgba(255,215,0,0.9);
+            margin: 0 0 10px;
+            font-size: 1rem;
+            color: rgba(255,215,0,0.95);
+            font-weight: 700;
         }
         .payment-item .amount {
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             font-weight: 900;
             color: var(--gold-primary);
+            text-shadow: 0 0 10px var(--gold-glow);
         }
         .payment-item .percent {
-            font-size: 0.85rem;
-            color: rgba(255,215,0,0.7);
+            font-size: 0.9rem;
+            color: rgba(255,215,0,0.75);
+            font-weight: 600;
         }
         
         .payment-instructions {
             background: linear-gradient(145deg, var(--black-tertiary), var(--black-card));
-            padding: 20px;
-            border-radius: 14px;
-            font-size: 0.95rem;
+            padding: 22px;
+            border-radius: 18px;
+            font-size: 1rem;
             text-align: left;
-            margin: 20px 0;
-            border-left: 5px solid var(--gold-primary);
-            line-height: 1.7;
+            margin: 25px 0;
+            border-left: 6px solid var(--gold-primary);
+            line-height: 1.8;
         }
         .payment-instructions code {
             background: var(--gold-primary);
             color: var(--black-primary);
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-weight: bold;
+            padding: 5px 14px;
+            border-radius: 10px;
+            font-weight: 800;
             font-family: monospace;
-            margin: 0 3px;
+            margin: 0 4px;
+            letter-spacing: 0.5px;
         }
         
         .payment-actions {
             display: flex;
-            gap: 12px;
+            gap: 15px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-top: 20px;
+            margin-top: 25px;
         }
         
         .btn-confirm {
             background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary));
             color: var(--black-primary);
             border: none;
-            padding: 16px 35px;
-            font-size: 1.15rem;
+            padding: 18px 40px;
+            font-size: 1.2rem;
             font-weight: 900;
-            border-radius: 16px;
+            border-radius: 20px;
             cursor: pointer;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            min-width: 200px;
+            min-width: 220px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .btn-confirm:hover { 
-            transform: scale(1.07);
-            box-shadow: 0 12px 40px var(--gold-glow);
+            transform: scale(1.08);
+            box-shadow: 0 15px 50px var(--gold-glow);
         }
         
         .btn-cancel {
             background: linear-gradient(135deg, #3a1a1a, #2a0a0a);
             color: var(--error-red);
-            border: 2px solid var(--error-red);
-            padding: 16px 35px;
-            font-size: 1.05rem;
-            font-weight: bold;
-            border-radius: 16px;
+            border: 3px solid var(--error-red);
+            padding: 18px 40px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            border-radius: 20px;
             cursor: pointer;
-            min-width: 200px;
+            min-width: 220px;
+            transition: all 0.25s ease;
         }
         .btn-cancel:hover {
             background: linear-gradient(135deg, #4a2a2a, #3a1a1a);
             border-color: var(--gold-secondary);
-            transform: scale(1.04);
+            transform: scale(1.05);
+            box-shadow: 0 10px 35px rgba(239, 68, 68, 0.4);
         }
 
         /* ===== PANEL DE ADMINISTRADOR ===== */
@@ -933,149 +994,130 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: linear-gradient(145deg, var(--black-card), var(--black-tertiary));
-            padding: 35px;
-            border-radius: 24px;
-            border: 4px solid var(--gold-primary);
-            box-shadow: 0 0 80px var(--gold-glow), 0 30px 70px rgba(0,0,0,0.95);
+            padding: 40px;
+            border-radius: 28px;
+            border: 5px solid var(--gold-primary);
+            box-shadow: 0 0 100px var(--gold-glow), 0 35px 85px rgba(0,0,0,0.97);
             z-index: 3000;
             width: 95%;
-            max-width: 700px;
-            max-height: 90vh;
+            max-width: 750px;
+            max-height: 92vh;
             overflow-y: auto;
         }
-        #admin-panel.active { display: block; }
+        #admin-panel.active { display: block; animation: modalPop 0.4s ease; }
         
         .admin-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--gold-dark);
+            margin-bottom: 30px;
+            padding-bottom: 18px;
+            border-bottom: 3px solid var(--gold-dark);
         }
         .admin-header h3 {
             color: var(--gold-primary);
             margin: 0;
-            font-size: 1.6rem;
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-shadow: 0 0 15px var(--gold-glow);
         }
         .admin-close {
             background: var(--error-red);
             color: white;
             border: none;
-            width: 35px;
-            height: 35px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            font-weight: bold;
+            font-weight: 900;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
+            transition: all 0.25s ease;
         }
-        .admin-close:hover { transform: scale(1.1); }
+        .admin-close:hover { transform: scale(1.15) rotate(90deg); box-shadow: 0 0 25px var(--error-red); }
         
-        .admin-form {
-            display: grid;
-            gap: 15px;
-        }
+        .admin-form { display: grid; gap: 18px; }
         .admin-form label {
             color: var(--gold-secondary);
-            font-size: 0.95rem;
-            font-weight: bold;
+            font-size: 1rem;
+            font-weight: 700;
         }
         .admin-form input, .admin-form select, .admin-form textarea {
             width: 100%;
-            padding: 12px 15px;
-            border-radius: 10px;
-            border: 2px solid var(--gold-dark);
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: 3px solid var(--gold-dark);
             background: var(--black-tertiary);
             color: var(--gold-primary);
-            font-size: 1rem;
+            font-size: 1.05rem;
+            transition: all 0.25s ease;
         }
         .admin-form input:focus, .admin-form select:focus, .admin-form textarea:focus {
             outline: none;
             border-color: var(--gold-primary);
-            box-shadow: 0 0 15px var(--gold-glow);
+            box-shadow: 0 0 20px var(--gold-glow);
+            transform: scale(1.015);
         }
-        .admin-form .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
+        .admin-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
         
         .lot-preview {
             background: var(--black-tertiary);
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 10px;
-            border: 1px dashed var(--gold-dark);
+            border-radius: 16px;
+            padding: 18px;
+            margin-top: 12px;
+            border: 2px dashed var(--gold-dark);
         }
         
         .btn-admin-save {
             background: linear-gradient(135deg, var(--success-green), #059669);
             color: white;
             border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 1.1rem;
+            padding: 16px;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 1.15rem;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 12px;
             width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.25s ease;
         }
         .btn-admin-save:hover {
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
-            transform: translateY(-2px);
-        }
-
-        /* ===== BADGE DE ESTADO ===== */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-        .status-badge.active {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--success-green);
-            border: 1px solid var(--success-green);
-        }
-        .status-badge.inactive {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--error-red);
-            border: 1px solid var(--error-red);
+            box-shadow: 0 10px 35px rgba(16, 185, 129, 0.6);
+            transform: translateY(-3px);
         }
 
         /* ===== CONFETI ===== */
         .confetti {
             position: fixed;
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             background: var(--gold-primary);
-            animation: confettiFall 3.5s ease-out forwards;
+            animation: confettiFall 4s ease-out forwards;
             pointer-events: none;
             z-index: 1999;
-            border-radius: 3px;
-            box-shadow: 0 0 10px var(--gold-glow);
+            border-radius: 4px;
+            box-shadow: 0 0 12px var(--gold-glow);
         }
         @keyframes confettiFall {
-            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+            0% { transform: translateY(-100vh) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg) scale(0.3); opacity: 0; }
         }
 
         /* ===== ALERTAS ===== */
         .alert {
             position: fixed;
-            top: 25px;
-            right: 25px;
-            padding: 18px 30px;
-            border-radius: 16px;
-            font-weight: bold;
+            top: 30px;
+            right: 30px;
+            padding: 20px 35px;
+            border-radius: 20px;
+            font-weight: 700;
             z-index: 5000;
-            animation: slideInRight 0.4s ease, fadeOut 0.4s ease 4.6s forwards;
-            max-width: 350px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.8);
-            border: 2px solid;
+            animation: slideInRight 0.45s ease, fadeOut 0.45s ease 4.55s forwards;
+            max-width: 380px;
+            box-shadow: 0 18px 60px rgba(0,0,0,0.85);
+            border: 3px solid;
+            font-size: 1.05rem;
         }
         .alert.success {
             background: linear-gradient(135deg, var(--success-green), #059669);
@@ -1093,28 +1135,29 @@
             border-color: var(--warning-orange);
         }
         @keyframes slideInRight {
-            from { transform: translateX(150%); opacity: 0; }
+            from { transform: translateX(180%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
         @keyframes fadeOut {
-            to { opacity: 0; transform: translateX(50px); }
+            to { opacity: 0; transform: translateX(60px); }
         }
 
         /* ===== RESPONSIVE ===== */
-        @media (max-width: 1000px) {
-            .auction-main { flex-direction: column; padding: 20px; }
-            .control-area { width: 100%; max-width: 450px; }
-            .massive-price { font-size: 4.5rem; }
+        @media (max-width: 1100px) {
+            .auction-main { flex-direction: column; padding: 25px; }
+            .control-area { width: 100%; max-width: 480px; }
+            .massive-price { font-size: 5rem; }
             .payment-split { grid-template-columns: 1fr; }
-            .lots-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+            .lots-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
         }
-        @media (max-width: 600px) {
-            #auth-screen { padding: 35px 30px; margin: 15px; }
-            .auth-title { font-size: 1.5rem; }
-            .massive-price { font-size: 3.5rem; }
-            .winner-card { padding: 30px 25px; margin: 10px; }
-            .winner-price { font-size: 3rem; }
-            .lots-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+        @media (max-width: 650px) {
+            #auth-screen { padding: 40px 35px; margin: 20px; }
+            .auth-title { font-size: 1.7rem; }
+            .massive-price { font-size: 4rem; }
+            .winner-card { padding: 35px 30px; margin: 15px; }
+            .winner-price { font-size: 3.5rem; }
+            .lots-grid { grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); }
+            .payment-split { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -1126,23 +1169,24 @@
         <h2 class="auth-title text-glow">⚡ Argentplay</h2>
         <p class="auth-subtitle">Plataforma de Subastas Premium • 50 Lotes Exclusivos</p>
         
-        <input type="text" class="auth-input" id="login-name" placeholder="👤 Nombre completo">
-        <input type="email" class="auth-input" id="login-email" placeholder="📧 Email">
-        <input type="tel" class="auth-input" id="login-phone" placeholder="📱 Número de celular">
-        <input type="text" class="auth-input" id="login-id" placeholder="🔑 ID de participante (opcional)">
+        <input type="text" class="auth-input hover-glow" id="login-name" placeholder="👤 Nombre completo">
+        <input type="email" class="auth-input hover-glow" id="login-email" placeholder="📧 Email">
+        <input type="tel" class="auth-input hover-glow" id="login-phone" placeholder="📱 Número de celular">
         
-        <button class="btn-primary hover-glow shine-effect click-ripple" onclick="handleLogin()">
+        <button class="btn-modern shine-effect click-ripple" id="btn-enter-platform" onclick="handleLogin()">
             🚀 INGRESAR A LA PLATAFORMA
         </button>
         
-        <button class="btn-secondary hover-glow" onclick="showAdminPanel()">
+        <button class="btn-modern btn-modern-secondary hover-glow" style="margin-top: 15px;" onclick="showAdminPanel()">
             🔐 Acceso Administrador
         </button>
         
-        <p class="admin-link" onclick="showAdminPanel()">¿Eres administrador? Accede aquí</p>
+        <p style="color: rgba(255,215,0,0.6); font-size: 0.9rem; margin-top: 30px; cursor: pointer;" onclick="showAdminPanel()">
+            ¿Eres administrador? <span style="text-decoration: underline; color: var(--gold-primary);">Accede aquí</span>
+        </p>
         
-        <p style="color: rgba(255,215,0,0.5); font-size: 0.8rem; margin-top: 25px;">
-            🔐 Conexión encriptada • ID asignado automáticamente si no ingresas uno
+        <p style="color: rgba(255,215,0,0.5); font-size: 0.85rem; margin-top: 28px;">
+            🔐 Conexión encriptada • ID asignado automáticamente
         </p>
     </div>
 </div>
@@ -1155,9 +1199,9 @@
     </div>
     
     <div class="user-info-bar">
-        <span style="color: rgba(255,215,0,0.8);">Participante:</span>
+        <span style="color: rgba(255,215,0,0.85); font-weight: 600;">Participante:</span>
         <span class="user-id-badge" id="display-user-id">ARG-XXXXXX</span>
-        <button class="btn-secondary" style="padding: 8px 18px; font-size: 0.9rem;" onclick="logout()">🚪 Salir</button>
+        <button class="btn-modern btn-modern-secondary hover-glow" style="padding: 10px 22px; font-size: 0.95rem;" onclick="logout()">🚪 Salir</button>
     </div>
     
     <div class="lots-grid" id="lots-container">
@@ -1174,19 +1218,16 @@
                 <span id="auction-lot-base">Base: $XX.XXX • Comisión: 8% + Seña: 22%</span>
             </div>
             <div class="live-indicator">
-                <span style="width: 14px; height: 14px; background: var(--success-green); border-radius: 50%; display: inline-block; animation: pulseLive 1s infinite;"></span>
+                <span style="width: 16px; height: 16px; background: var(--success-green); border-radius: 50%; display: inline-block; animation: pulseLive 1.2s infinite;"></span>
                 🔴 EN VIVO
             </div>
         </div>
 
         <div class="auction-main">
-            <!-- Visualización y Precio -->
             <div class="visual-area">
                 <img src="" alt="Producto" class="product-image" id="auction-image">
-                
                 <div class="massive-price text-glow" id="current-price">$ XX.XXX</div>
                 
-                <!-- Desglose de comisiones -->
                 <div class="commission-breakdown">
                     <h4>💰 Desglose del Precio Final</h4>
                     <div class="commission-row platform">
@@ -1203,31 +1244,28 @@
                     </div>
                 </div>
                 
-                <!-- Countdown de cierre (3 minutos) -->
                 <div class="countdown-banner pulse-gold" id="closing-countdown">
                     ⚡ CIERRE INMINENTE: <span id="countdown-timer">03:00</span>
                 </div>
-                
                 <div class="restart-notice" id="restart-notice">
                     🔄 Subasta reiniciada • ¡Nuevas ofertas disponibles!
                 </div>
             </div>
 
-            <!-- Panel de Control -->
             <div class="control-area hover-glow">
                 <div>
-                    <h3 style="margin-top: 0; color: var(--gold-primary); border-bottom: 2px solid var(--gold-dark); padding-bottom: 14px;">
+                    <h3 style="margin-top: 0; color: var(--gold-primary); border-bottom: 3px solid var(--gold-dark); padding-bottom: 16px; font-weight: 800;">
                         💰 Panel de Oferta
                     </h3>
-                    <p style="color: rgba(255,215,0,0.85); font-size: 0.95rem; line-height: 1.6;">
+                    <p style="color: rgba(255,215,0,0.9); font-size: 1rem; line-height: 1.65;">
                         Tus ofertas son <strong style="color: var(--gold-primary);">legalmente vinculantes</strong>. 
                         Al ganar: <strong>8%</strong> para Argentplay + <strong>22%</strong> para el vendedor.
                     </p>
                     <div class="tension-msg" id="tension-text"></div>
                     
-                    <div style="margin-top: 18px; text-align: center; padding-top: 15px; border-top: 1px solid var(--gold-dark);">
-                        <span style="color: rgba(255,215,0,0.75); font-size: 0.9rem;">Tu ID:</span><br>
-                        <strong id="current-user-id-auction" style="color: var(--gold-primary); font-size: 1.2rem; letter-spacing: 2px;">ARG-XXXXXX</strong>
+                    <div style="margin-top: 20px; text-align: center; padding-top: 18px; border-top: 2px solid var(--gold-dark);">
+                        <span style="color: rgba(255,215,0,0.8); font-size: 0.95rem;">Tu ID:</span><br>
+                        <strong id="current-user-id-auction" style="color: var(--gold-primary); font-size: 1.3rem; letter-spacing: 2.5px; font-weight: 900;">ARG-XXXXXX</strong>
                     </div>
                 </div>
 
@@ -1239,12 +1277,12 @@
                         + $ 5.000 🚀
                     </button>
                     
-                    <input type="number" id="custom-bid" class="input-manual" placeholder="Monto específico">
-                    <button class="btn-primary hover-glow shine-effect click-ripple" style="font-size: 1.1rem; padding: 15px;" onclick="placeManualBid()">
+                    <input type="number" id="custom-bid" class="input-manual hover-glow" placeholder="Monto específico">
+                    <button class="btn-modern shine-effect click-ripple" style="width: 100%; font-size: 1.15rem; padding: 17px;" onclick="placeManualBid()">
                         💎 OFERTAR MONTO
                     </button>
                     
-                    <button class="btn-secondary hover-glow" style="width: 100%; margin-top: 10px; padding: 12px;" onclick="goBackToLots()">
+                    <button class="btn-modern btn-modern-secondary hover-glow" style="width: 100%; margin-top: 12px; padding: 14px; font-size: 1rem;" onclick="goBackToLots()">
                         ← Volver a los lotes
                     </button>
                 </div>
@@ -1257,10 +1295,10 @@
 <div class="winner-modal" id="winner-modal">
     <div class="winner-card">
         <h2>🎉 ¡FELICITACIONES!</h2>
-        <p style="font-size: 1.25rem; color: rgba(255,215,0,0.95);">
+        <p style="font-size: 1.3rem; color: rgba(255,215,0,0.98);">
             Participante <strong class="winner-id" id="winner-id-display">ARG-XXXXXX</strong>
         </p>
-        <p style="color: rgba(255,215,0,0.75); margin: 8px 0 18px;" id="winner-lot-name">Ganó el Lote #XX</p>
+        <p style="color: rgba(255,215,0,0.8); margin: 10px 0 20px;" id="winner-lot-name">Ganó el Lote #XX</p>
         
         <div class="winner-price" id="winner-final-price">XX.XXX</div>
         
@@ -1270,5 +1308,663 @@
             </div>
             
             <div class="payment-split">
-                <div class="payment-item platform">
-                    <h4>🏦 Plataform
+                <div class="payment-item platform hover-glow">
+                    <h4>🏦 Plataforma</h4>
+                    <div class="amount" id="pay-platform">$ X.XXX</div>
+                    <div class="percent">8% de comisión</div>
+                </div>
+                <div class="payment-item seller hover-glow">
+                    <h4>👤 Vendedor</h4>
+                    <div class="amount" id="pay-seller">$ X.XXX</div>
+                    <div class="percent">22% de seña</div>
+                </div>
+            </div>
+            
+            <div class="payment-instructions">
+                <strong style="color: var(--gold-primary); font-size: 1.05rem;">📋 Instrucciones:</strong><br>
+                1️⃣ Transferir <strong id="payment-amount-total">$ X.XXX</strong> (30% del total)<br>
+                2️⃣ Dividir: <code>8%</code> a Argentplay + <code>22%</code> al vendedor<br>
+                3️⃣ Referencia: <code id="winner-ref">ARGPAY-XXXX</code><br>
+                4️⃣ Confirmar con el botón verde ✅<br><br>
+                <span style="color: var(--gold-secondary); font-size: 0.95rem;">⚠️ Si no se completa en 5 minutos, se reinicia la subasta y tu ID será penalizado.</span>
+            </div>
+            
+            <div class="payment-actions">
+                <button class="btn-modern btn-modern-success hover-glow click-ripple" onclick="confirmPayment()">
+                    ✅ PAGOS REALIZADOS
+                </button>
+                <button class="btn-modern btn-modern-danger hover-glow click-ripple" onclick="cancelAuction()">
+                    ❌ REINICIAR
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== PANEL DE ADMINISTRADOR ========== -->
+<div id="admin-panel">
+    <div class="admin-header">
+        <h3>⚙️ Administrar Lotes</h3>
+        <button class="admin-close hover-glow" onclick="closeAdminPanel()">×</button>
+    </div>
+    
+    <form class="admin-form" onsubmit="saveLot(event)">
+        <div class="form-row">
+            <div>
+                <label>Número de Lote</label>
+                <input type="number" id="admin-lot-number" min="1" max="50" required>
+            </div>
+            <div>
+                <label>Estado</label>
+                <select id="admin-lot-status">
+                    <option value="active">🟢 Activo (Subasta en vivo)</option>
+                    <option value="inactive">🔴 Inactivo</option>
+                </select>
+            </div>
+        </div>
+        
+        <div>
+            <label>Nombre del Producto</label>
+            <input type="text" id="admin-lot-name" placeholder="Ej: Reloj de Colección Rolex" required>
+        </div>
+        
+        <div class="form-row">
+            <div>
+                <label>Precio Base ($)</label>
+                <input type="number" id="admin-lot-base" min="1000" required>
+            </div>
+            <div>
+                <label>URL de Imagen</label>
+                <input type="url" id="admin-lot-image" placeholder="https://..." required>
+            </div>
+        </div>
+        
+        <div>
+            <label>Descripción</label>
+            <textarea id="admin-lot-desc" rows="3" placeholder="Detalles del lote..."></textarea>
+        </div>
+        
+        <div class="lot-preview">
+            <strong style="color: var(--gold-secondary);">Vista previa:</strong>
+            <p id="admin-preview" style="color: rgba(255,215,0,0.8); margin-top: 8px; font-size: 0.95rem;">
+                Lote #X: [Nombre] • Base: $X.XXX • <span class="status-badge active">Activo</span>
+            </p>
+        </div>
+        
+        <button type="submit" class="btn-admin-save hover-glow shine-effect">
+            💾 GUARDAR CAMBIOS
+        </button>
+    </form>
+</div>
+
+<script>
+    // ===== VARIABLES GLOBALES =====
+    let currentUser = null;
+    let currentLot = null;
+    let currentPrice = 10000;
+    let lastBidTime = Date.now();
+    let auctionState = 'active';
+    
+    // Timers
+    let closingTimerInterval = null;
+    let paymentTimerInterval = null;
+    let inactivityCheckInterval = null;
+    
+    // Configuración
+    const INACTIVITY_THRESHOLD = 70000; // 70 segundos
+    const CLOSING_DURATION = 3 * 60 * 1000; // 3 minutos
+    const PAYMENT_DURATION = 5 * 60 * 1000; // 5 minutos
+    
+    // Base de datos de lotes (simulada)
+    const lotsDB = {};
+    const bannedUsers = new Set();
+
+    // ===== GENERADOR DE ID ÚNICO =====
+    function generateUserID() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let id = 'ARG-';
+        for(let i = 0; i < 6; i++) {
+            id += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return id;
+    }
+
+    // ===== LOGIN - FUNCIONA CON ID ALEATORIO AUTOMÁTICO =====
+    function handleLogin() {
+        const name = document.getElementById('login-name').value.trim();
+        const email = document.getElementById('login-email').value.trim();
+        const phone = document.getElementById('login-phone').value.trim();
+        
+        if(!name || !email || !phone) {
+            showAlert('⚠️ Completa todos los campos', 'error');
+            return;
+        }
+        
+        // 🔥 Generar ID automático aleatorio
+        const userId = generateUserID();
+        
+        // Verificar si está baneado
+        if(bannedUsers.has(userId)) {
+            showAlert('🚫 Este ID ha sido penalizado. Contacta a soporte.', 'error');
+            return;
+        }
+        
+        // Guardar usuario
+        currentUser = { id: userId, name, email, phone };
+        
+        // Actualizar UI
+        document.getElementById('display-user-id').innerText = userId;
+        document.getElementById('current-user-id-auction').innerText = userId;
+        
+        // Efecto de entrada
+        document.getElementById('login-page').classList.remove('active');
+        document.getElementById('lots-page').classList.add('active');
+        
+        // Generar lotes si es la primera vez
+        if(Object.keys(lotsDB).length === 0) {
+            initializeLots();
+        }
+        
+        renderLotsGrid();
+        showAlert(`✅ Bienvenido ${name} • Tu ID: ${userId}`, 'success');
+    }
+
+    // ===== INICIALIZAR 50 LOTES =====
+    function initializeLots() {
+        const products = [
+            'Reloj de Colección', 'Arte Moderno', 'Automóvil Clásico', 'Guitarra Vintage',
+            'Cámara Leica', 'Bolsa de Lujo', 'Vino Premium', 'Escultura Bronce',
+            'Diamond Ring', 'Manuscrito Antiguo', 'Sneakers Limited', 'Consola Retro',
+            'Vinilos Raros', 'Traje de Época', 'Espada Samurai', 'Moneda de Oro',
+            'Reloj Patek', 'Cuadro Original', 'Bicicleta Custom', 'Botella Whisky',
+            'Cámara Hasselblad', 'Pluma Estilográfica', 'Cuchillo Colección', 'Figura Action',
+            'Cascos Audio', 'Lente Fotográfico', 'Billetera Cuero', 'Perfume Exclusivo',
+            'Libro Primera Edición', 'Mapa Antiguo', 'Instrumento Musical', 'Joya Familiar',
+            'Reloj Audemars', 'Arte Digital NFT', 'Auto Deportivo', 'Guitarra Fender',
+            'Cámara Rolleiflex', 'Bolsa Hermès', 'Champagne Dom Pérignon', 'Estatua Mármol',
+            'Collar Diamantes', 'Carta Histórica', 'Zapatillas Jordan', 'Consola Nintendo',
+            'Álbum Beatles', 'Traje de Gala', 'Katana Auténtica', 'Lingote Plata',
+            'Reloj Omega', 'Pintura al Óleo', 'Moto Harley', 'Whisky Macallan'
+        ];
+        
+        const images = [
+            'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1516483638261-f4db3d3d87c7?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=400&q=80'
+        ];
+        
+        for(let i = 1; i <= 50; i++) {
+            lotsDB[i] = {
+                id: i,
+                name: products[(i-1) % products.length],
+                basePrice: Math.floor(Math.random() * 40000) + 10000,
+                image: images[(i-1) % images.length],
+                status: Math.random() > 0.3 ? 'active' : 'inactive', // 70% activos
+                description: `Lote exclusivo #${i} - Artículo de colección verificado`
+            };
+        }
+    }
+
+    // ===== RENDERIZAR GRID DE LOTES =====
+    function renderLotsGrid() {
+        const container = document.getElementById('lots-container');
+        container.innerHTML = '';
+        
+        Object.values(lotsDB).forEach(lot => {
+            const commission8 = Math.round(lot.basePrice * 0.08);
+            const commission22 = Math.round(lot.basePrice * 0.22);
+            const total30 = commission8 + commission22;
+            
+            const card = document.createElement('div');
+            card.className = 'lot-card hover-glow';
+            card.innerHTML = `
+                <div class="lot-status ${lot.status}"></div>
+                <div class="lot-number">LOTE #${lot.id.toString().padStart(2, '0')}</div>
+                <img src="${lot.image}" alt="${lot.name}" class="lot-image">
+                <div class="lot-name">${lot.name}</div>
+                <div class="lot-base">$ ${lot.basePrice.toLocaleString()}</div>
+                <div class="lot-commission">
+                    🏦 8%: $${commission8.toLocaleString()}<br>
+                    👤 22%: $${commission22.toLocaleString()}<br>
+                    <strong style="color: var(--gold-primary);">Total 30%: $${total30.toLocaleString()}</strong>
+                </div>
+                <button class="btn-enter-lot hover-glow shine-effect" 
+                        onclick="enterAuction(${lot.id})"
+                        ${lot.status === 'inactive' ? 'disabled' : ''}>
+                    ${lot.status === 'active' ? '🔥 INGRESAR' : '🔒 PRÓXIMAMENTE'}
+                </button>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // ===== ENTRAR A SUBASTA DE UN LOTE =====
+    function enterAuction(lotId) {
+        const lot = lotsDB[lotId];
+        if(!lot || lot.status !== 'active') {
+            showAlert('⚠️ Este lote no está disponible para subasta', 'warning');
+            return;
+        }
+        
+        currentLot = lot;
+        currentPrice = lot.basePrice;
+        lastBidTime = Date.now();
+        auctionState = 'active';
+        
+        // Actualizar UI de la sala
+        document.getElementById('auction-lot-name').innerText = `Lote #${lot.id}: ${lot.name}`;
+        document.getElementById('auction-lot-base').innerText = `Base: $${lot.basePrice.toLocaleString()} • Comisión: 8% + Seña: 22%`;
+        document.getElementById('auction-image').src = lot.image;
+        document.getElementById('winner-lot-name').innerText = `Ganó el Lote #${lot.id}: ${lot.name}`;
+        
+        updatePriceDisplay();
+        updateCommissionDisplay();
+        
+        // Cambiar de página
+        document.getElementById('lots-page').classList.remove('active');
+        document.getElementById('auction-page').classList.add('active');
+        
+        // Iniciar monitoreo
+        startInactivityMonitor();
+        
+        showAlert(`🎯 Subasta del Lote #${lot.id} iniciada`, 'success');
+    }
+
+    // ===== ACTUALIZAR PRECIO Y COMISIONES =====
+    function updatePriceDisplay() {
+        document.getElementById('current-price').innerText = `$ ${currentPrice.toLocaleString()}`;
+        flashPrice();
+    }
+    
+    function updateCommissionDisplay() {
+        const platform = Math.round(currentPrice * 0.08);
+        const seller = Math.round(currentPrice * 0.22);
+        const total = platform + seller;
+        
+        document.getElementById('commission-platform').innerText = `$ ${platform.toLocaleString()}`;
+        document.getElementById('commission-seller').innerText = `$ ${seller.toLocaleString()}`;
+        document.getElementById('commission-total').innerText = `$ ${total.toLocaleString()}`;
+        
+        // También actualizar en modal de ganador
+        document.getElementById('pay-platform').innerText = `$ ${platform.toLocaleString()}`;
+        document.getElementById('pay-seller').innerText = `$ ${seller.toLocaleString()}`;
+        document.getElementById('payment-amount-total').innerText = `$ ${total.toLocaleString()}`;
+    }
+    
+    function flashPrice() {
+        const el = document.getElementById('current-price');
+        el.classList.add('price-flash');
+        setTimeout(() => el.classList.remove('price-flash'), 200);
+    }
+
+    // ===== OFERTAR =====
+    function placeBid(increment) {
+        if(auctionState !== 'active' && auctionState !== 'closing') return;
+        currentPrice += increment;
+        lastBidTime = Date.now();
+        updatePriceDisplay();
+        updateCommissionDisplay();
+        showTensionMessage('¡Has tomado la delantera! 🏆');
+        
+        if(auctionState === 'closing') resetClosingCountdown();
+    }
+    
+    function placeManualBid() {
+        if(auctionState !== 'active' && auctionState !== 'closing') return;
+        const input = document.getElementById('custom-bid');
+        const val = parseInt(input.value);
+        
+        if(val && val > currentPrice) {
+            currentPrice = val;
+            input.value = '';
+            lastBidTime = Date.now();
+            updatePriceDisplay();
+            updateCommissionDisplay();
+            showTensionMessage('¡Oferta agresiva registrada! 💎');
+            
+            if(auctionState === 'closing') resetClosingCountdown();
+        } else {
+            showAlert('La oferta debe ser superior al precio actual', 'error');
+        }
+    }
+    
+    function showTensionMessage(text) {
+        const el = document.getElementById('tension-text');
+        el.innerText = text;
+        el.style.animation = 'none';
+        setTimeout(() => el.style.animation = 'slideIn 0.35s ease', 10);
+    }
+
+    // ===== COUNTDOWN POR INACTIVIDAD (70s → 3min cierre) =====
+    function startInactivityMonitor() {
+        clearInterval(inactivityCheckInterval);
+        inactivityCheckInterval = setInterval(() => {
+            if((Date.now() - lastBidTime) >= INACTIVITY_THRESHOLD && auctionState === 'active') {
+                startClosingCountdown();
+            }
+        }, 1000);
+    }
+    
+    function startClosingCountdown() {
+        if(auctionState !== 'active') return;
+        auctionState = 'closing';
+        document.getElementById('closing-countdown').style.display = 'block';
+        showTensionMessage('⚡ ¡Última oportunidad para ofertar!');
+        
+        let remaining = CLOSING_DURATION;
+        updateCountdownDisplay(remaining);
+        
+        closingTimerInterval = setInterval(() => {
+            remaining -= 1000;
+            updateCountdownDisplay(remaining);
+            if(remaining <= 0) {
+                clearInterval(closingTimerInterval);
+                declareWinner();
+            }
+        }, 1000);
+    }
+    
+    function resetClosingCountdown() {
+        auctionState = 'active';
+        document.getElementById('closing-countdown').style.display = 'none';
+        document.getElementById('tension-text').innerText = '';
+        if(closingTimerInterval) clearInterval(closingTimerInterval);
+    }
+    
+    function updateCountdownDisplay(ms) {
+        const sec = Math.ceil(ms / 1000);
+        const m = Math.floor(sec / 60).toString().padStart(2, '0');
+        const s = (sec % 60).toString().padStart(2, '0');
+        document.getElementById('countdown-timer').innerText = `${m}:${s}`;
+        
+        if(sec <= 30) {
+            document.getElementById('closing-countdown').style.background = 'linear-gradient(135deg, #FFC107, #B8860B)';
+            showTensionMessage('🔥 ¡CIERRE INMINENTE!');
+        }
+        if(sec <= 10) {
+            document.getElementById('countdown-timer').style.animation = 'pulseUrgent 0.45s infinite';
+        }
+    }
+
+    // ===== DECLARAR GANADOR =====
+    function declareWinner() {
+        auctionState = 'won';
+        clearInterval(inactivityCheckInterval);
+        createConfetti();
+        
+        const ref = Math.random().toString(36).substring(2, 8).toUpperCase();
+        document.getElementById('winner-id-display').innerText = currentUser.id;
+        document.getElementById('winner-final-price').innerText = currentPrice.toLocaleString();
+        document.getElementById('winner-ref').innerText = `ARGPAY-${ref}`;
+        
+        updateCommissionDisplay(); // Actualizar montos en modal
+        
+        document.getElementById('winner-modal').style.display = 'flex';
+        startPaymentTimer();
+    }
+    
+    function createConfetti() {
+        for(let i = 0; i < 60; i++) {
+            setTimeout(() => {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.background = Math.random() > 0.5 ? 'var(--gold-primary)' : 'var(--gold-secondary)';
+                c.style.width = c.style.height = (Math.random() * 10 + 8) + 'px';
+                c.style.animationDuration = (Math.random() * 2.5 + 2) + 's';
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 5000);
+            }, i * 45);
+        }
+    }
+
+    // ===== TIMER DE PAGO (5 MIN) =====
+    function startPaymentTimer() {
+        auctionState = 'payment_pending';
+        let remaining = PAYMENT_DURATION;
+        const el = document.getElementById('payment-countdown');
+        const container = document.getElementById('payment-timer');
+        
+        updatePaymentDisplay(remaining, el, container);
+        
+        paymentTimerInterval = setInterval(() => {
+            remaining -= 1000;
+            updatePaymentDisplay(remaining, el, container);
+            if(remaining <= 0) {
+                clearInterval(paymentTimerInterval);
+                handlePaymentTimeout();
+            }
+        }, 1000);
+    }
+    
+    function updatePaymentDisplay(ms, el, container) {
+        const sec = Math.ceil(ms / 1000);
+        const m = Math.floor(sec / 60).toString().padStart(2, '0');
+        const s = (sec % 60).toString().padStart(2, '0');
+        el.innerText = `${m}:${s}`;
+        
+        if(sec <= 60) {
+            container.classList.add('urgent');
+            showTensionMessage('⚠️ ¡Poco tiempo para confirmar!');
+        }
+        if(sec <= 15) {
+            el.style.animation = 'pulseUrgent 0.45s infinite';
+        }
+    }
+
+    // ===== CONFIRMAR PAGO =====
+    function confirmPayment() {
+        if(auctionState !== 'payment_pending') return;
+        clearInterval(paymentTimerInterval);
+        auctionState = 'completed';
+        
+        // Mostrar datos de vendedor y comprador (simulado)
+        document.getElementById('winner-modal').innerHTML = `
+            <div class="winner-card" style="border-color: #3b82f6;">
+                <div style="font-size: 5rem; margin-bottom: 15px;">✅</div>
+                <h2 style="color: var(--gold-primary);">🎉 OPERACIÓN EXITOSA</h2>
+                <p style="font-size: 1.2rem; color: rgba(255,215,0,0.95); margin: 15px 0;">
+                    Participante: <strong style="color: var(--gold-primary);">${currentUser.id}</strong>
+                </p>
+                <div style="background: var(--black-tertiary); padding: 20px; border-radius: 16px; margin: 20px 0; text-align: left;">
+                    <p><strong style="color: var(--gold-secondary);">👤 Comprador:</strong> ${currentUser.name}</p>
+                    <p><strong style="color: var(--gold-secondary);">📧 Email:</strong> ${currentUser.email}</p>
+                    <p><strong style="color: var(--gold-secondary);">📱 Celular:</strong> ${currentUser.phone}</p>
+                    <p style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--gold-dark);">
+                        <strong style="color: var(--gold-light);">🤝 Vendedor:</strong> Datos compartidos tras confirmación de pagos
+                    </p>
+                </div>
+                <p style="color: rgba(255,215,0,0.8); margin: 20px 0;">
+                    Ambos participantes recibirán email con detalles de entrega.<br>
+                    ¡Gracias por usar Argentplay! 🏆
+                </p>
+                <button class="btn-modern hover-glow shine-effect" onclick="location.reload()" style="margin-top: 10px;">
+                    🏠 VOLVER AL INICIO
+                </button>
+            </div>
+        `;
+    }
+
+    // ===== CANCELAR / REINICIAR =====
+    function cancelAuction() {
+        if(auctionState !== 'payment_pending' && auctionState !== 'won') return;
+        clearInterval(paymentTimerInterval);
+        restartAuction();
+    }
+    
+    function handlePaymentTimeout() {
+        auctionState = 'timeout';
+        
+        // 🔥 PENALIZAR USUARIO: Banear ID
+        bannedUsers.add(currentUser.id);
+        
+        document.getElementById('winner-modal').innerHTML = `
+            <div class="winner-card" style="border-color: var(--error-red);">
+                <div style="font-size: 5rem; margin-bottom: 15px; color: var(--error-red);">⏰</div>
+                <h2 style="color: var(--gold-secondary);">TIEMPO AGOTADO</h2>
+                <p style="font-size: 1.15rem; color: rgba(255,215,0,0.85); margin: 15px 0;">
+                    No se confirmaron los pagos en 5 minutos.
+                </p>
+                <p style="color: var(--error-red); font-weight: 700; margin: 20px 0; font-size: 1.1rem;">
+                    ⚠️ Tu ID <strong>${currentUser.id}</strong> ha sido penalizado y bloqueado.
+                </p>
+                <p style="color: rgba(255,215,0,0.7); margin-bottom: 25px;">
+                    La subasta se reiniciará automáticamente...
+                </p>
+                <button class="btn-modern btn-modern-danger hover-glow" onclick="restartAuction()">
+                    🔄 REINICIAR AHORA
+                </button>
+            </div>
+        `;
+        setTimeout(restartAuction, 7000);
+    }
+    
+    function restartAuction() {
+        currentPrice = currentLot.basePrice;
+        lastBidTime = Date.now();
+        auctionState = 'active';
+        
+        document.getElementById('current-price').innerText = `$ ${currentPrice.toLocaleString()}`;
+        document.getElementById('closing-countdown').style.display = 'none';
+        document.getElementById('winner-modal').style.display = 'none';
+        document.getElementById('restart-notice').style.display = 'block';
+        document.getElementById('tension-text').innerText = '';
+        
+        // Restaurar modal
+        document.getElementById('winner-modal').innerHTML = `
+            <div class="winner-card">
+                <h2>🎉 ¡FELICITACIONES!</h2>
+                <p style="font-size: 1.3rem; color: rgba(255,215,0,0.98);">
+                    Participante <strong class="winner-id" id="winner-id-display">ARG-XXXXXX</strong>
+                </p>
+                <p style="color: rgba(255,215,0,0.8); margin: 10px 0 20px;" id="winner-lot-name">Ganó el Lote #XX</p>
+                <div class="winner-price" id="winner-final-price">XX.XXX</div>
+                <div class="payment-section">
+                    <div class="payment-timer" id="payment-timer">
+                        ⏰ Tiempo para completar pagos: <strong id="payment-countdown" style="color: var(--gold-primary);">05:00</strong>
+                    </div>
+                    <div class="payment-split">
+                        <div class="payment-item platform hover-glow">
+                            <h4>🏦 Plataforma</h4>
+                            <div class="amount" id="pay-platform">$ X.XXX</div>
+                            <div class="percent">8% de comisión</div>
+                        </div>
+                        <div class="payment-item seller hover-glow">
+                            <h4>👤 Vendedor</h4>
+                            <div class="amount" id="pay-seller">$ X.XXX</div>
+                            <div class="percent">22% de seña</div>
+                        </div>
+                    </div>
+                    <div class="payment-instructions">
+                        <strong style="color: var(--gold-primary); font-size: 1.05rem;">📋 Instrucciones:</strong><br>
+                        1️⃣ Transferir <strong id="payment-amount-total">$ X.XXX</strong> (30% del total)<br>
+                        2️⃣ Dividir: <code>8%</code> a Argentplay + <code>22%</code> al vendedor<br>
+                        3️⃣ Referencia: <code id="winner-ref">ARGPAY-XXXX</code><br>
+                        4️⃣ Confirmar con el botón verde ✅<br><br>
+                        <span style="color: var(--gold-secondary); font-size: 0.95rem;">⚠️ Si no se completa en 5 minutos, se reinicia la subasta y tu ID será penalizado.</span>
+                    </div>
+                    <div class="payment-actions">
+                        <button class="btn-modern btn-modern-success hover-glow click-ripple" onclick="confirmPayment()">✅ PAGOS REALIZADOS</button>
+                        <button class="btn-modern btn-modern-danger hover-glow click-ripple" onclick="cancelAuction()">❌ REINICIAR</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        setTimeout(() => document.getElementById('restart-notice').style.display = 'none', 6000);
+        startInactivityMonitor();
+        updateCommissionDisplay();
+    }
+
+    // ===== NAVEGACIÓN =====
+    function goBackToLots() {
+        clearInterval(inactivityCheckInterval);
+        clearInterval(closingTimerInterval);
+        document.getElementById('auction-page').classList.remove('active');
+        document.getElementById('lots-page').classList.add('active');
+    }
+    
+    function logout() {
+        currentUser = null;
+        currentLot = null;
+        document.getElementById('lots-page').classList.remove('active');
+        document.getElementById('login-page').classList.add('active');
+        document.getElementById('login-name').value = '';
+        document.getElementById('login-email').value = '';
+        document.getElementById('login-phone').value = '';
+    }
+
+    // ===== PANEL ADMIN =====
+    function showAdminPanel() {
+        document.getElementById('admin-panel').classList.add('active');
+    }
+    
+    function closeAdminPanel() {
+        document.getElementById('admin-panel').classList.remove('active');
+    }
+    
+    function saveLot(e) {
+        e.preventDefault();
+        const id = parseInt(document.getElementById('admin-lot-number').value);
+        
+        lotsDB[id] = {
+            id,
+            name: document.getElementById('admin-lot-name').value,
+            basePrice: parseInt(document.getElementById('admin-lot-base').value),
+            image: document.getElementById('admin-lot-image').value,
+            status: document.getElementById('admin-lot-status').value,
+            description: document.getElementById('admin-lot-desc').value
+        };
+        
+        showAlert(`✅ Lote #${id} actualizado`, 'success');
+        closeAdminPanel();
+        if(document.getElementById('lots-page').classList.contains('active')) {
+            renderLotsGrid();
+        }
+    }
+    
+    // Preview en tiempo real del admin
+    ['admin-lot-number', 'admin-lot-name', 'admin-lot-base', 'admin-lot-status'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', () => {
+            const num = document.getElementById('admin-lot-number').value || 'X';
+            const name = document.getElementById('admin-lot-name').value || '[Nombre]';
+            const base = document.getElementById('admin-lot-base').value || 'X.XXX';
+            const status = document.getElementById('admin-lot-status').value;
+            const badge = status === 'active' 
+                ? '<span class="status-badge active">Activo</span>' 
+                : '<span class="status-badge inactive">Inactivo</span>';
+            document.getElementById('admin-preview').innerHTML = 
+                `Lote #${num}: ${name} • Base: $${parseInt(base).toLocaleString() || 'X.XXX'} • ${badge}`;
+        });
+    });
+
+    // ===== ALERTAS =====
+    function showAlert(msg, type) {
+        const alert = document.createElement('div');
+        alert.className = `alert ${type}`;
+        alert.innerText = msg;
+        document.body.appendChild(alert);
+        setTimeout(() => alert.remove(), 5000);
+    }
+
+    // ===== CLEANUP =====
+    window.addEventListener('beforeunload', () => {
+        [closingTimerInterval, paymentTimerInterval, inactivityCheckInterval].forEach(t => t && clearInterval(t));
+    });
+
+    // ===== INICIALIZACIÓN =====
+    window.addEventListener('load', () => {
+        document.getElementById('auth-screen').style.opacity = '0';
+        document.getElementById('auth-screen').style.transform = 'translateY(25px)';
+        setTimeout(() => {
+            document.getElementById('auth-screen').style.transition = 'all 0.55s cubic-bezier(0.4, 0, 0.2, 1)';
+            document.getElementById('auth-screen').style.opacity = '1';
+            document.getElementById('auth-screen').style.transform = 'translateY(0)';
+        }, 150);
+    });
+</script>
+
+</body>
+</html>
