@@ -20,6 +20,8 @@
             --success-green: #10b981;
             --error-red: #ef4444;
             --warning-orange: #f59e0b;
+            --cyber-blue: #00f5ff;
+            --cyber-purple: #bc13fe;
         }
 
         /* ===== RESET Y BASE ===== */
@@ -38,40 +40,194 @@
             line-height: 1.5;
         }
 
-        /* ===== BACKGROUND ANIMADO - OPACIDAD 100% ===== */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            animation: bgPan 40s linear infinite alternate, bgPulse 12s ease-in-out infinite;
-            z-index: -3;
-            filter: none;
-            opacity: 1;
+        /* ===== 🌟 FONDO FUTURISTA PARA PÁGINA 1 - LOGIN ===== */
+        #login-page {
+            position: relative;
+            overflow: hidden;
         }
 
-        body::after {
+        /* Fondo principal futurista con gradiente animado */
+        #login-page::before {
             content: '';
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: 
-                radial-gradient(ellipse at center, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.75) 100%),
-                radial-gradient(var(--gold-glow) 1px, transparent 1px),
-                radial-gradient(var(--gold-glow) 1px, transparent 1px);
-            background-size: 100% 100%, 65px 65px, 90px 90px;
-            background-position: 0 0, 0 0, 32px 32px;
-            opacity: 0.22;
+                radial-gradient(ellipse at 20% 80%, rgba(188, 19, 254, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(0, 245, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(255, 215, 0, 0.08) 0%, transparent 70%),
+                linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 25%, #0f0f1a 50%, #1a1a2e 75%, #0a0a0f 100%);
+            z-index: -3;
+            animation: gradientShift 15s ease infinite alternate;
+        }
+
+        /* Grid futurista animado */
+        #login-page::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 215, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 215, 0, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
             z-index: -2;
-            animation: particlesFloat 28s linear infinite;
             pointer-events: none;
         }
 
-        @keyframes bgPan { 0% { background-position: center center; } 100% { background-position: center 120%; } }
-        @keyframes bgPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
-        @keyframes particlesFloat { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-70px) rotate(4deg); } }
+        /* Partículas flotantes doradas */
+        .particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: var(--gold-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--gold-glow), 0 0 25px var(--gold-primary);
+            animation: particleFloat 8s ease-in-out infinite;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes gridMove {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+        }
+        @keyframes particleFloat {
+            0%, 100% { transform: translateY(0) translateX(0) scale(1); opacity: 0.8; }
+            25% { transform: translateY(-30px) translateX(15px) scale(1.2); opacity: 1; }
+            50% { transform: translateY(-60px) translateX(-10px) scale(0.9); opacity: 0.6; }
+            75% { transform: translateY(-30px) translateX(-20px) scale(1.1); opacity: 0.9; }
+        }
+
+        /* Efecto de scanline futurista */
+        .scanline {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, 
+                transparent 0%, 
+                rgba(255, 215, 0, 0.02) 50%, 
+                transparent 100%);
+            animation: scanlineMove 4s linear infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+        @keyframes scanlineMove {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(1000%); }
+        }
+
+        /* ===== TÍTULO PERSUASIVO "SUBASTA ARGENTPLAY" ===== */
+        .hero-title {
+            position: relative;
+            text-align: center;
+            margin-bottom: 35px;
+            padding: 25px 20px;
+            z-index: 5;
+        }
+
+        .hero-title-main {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 900;
+            letter-spacing: -2px;
+            line-height: 0.95;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, 
+                var(--gold-primary) 0%, 
+                var(--gold-light) 25%, 
+                var(--gold-secondary) 50%, 
+                var(--gold-primary) 75%, 
+                var(--gold-light) 100%);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShine 4s ease infinite, titleGlow 2.5s ease-in-out infinite alternate;
+            text-shadow: none;
+            position: relative;
+        }
+
+        .hero-title-main::before {
+            content: 'SUBASTA ARGENTPLAY';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: blur(25px);
+            opacity: 0.6;
+            z-index: -1;
+            animation: titleGlow 2.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleShine {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 20px var(--gold-glow), 0 0 40px var(--gold-primary); }
+            100% { text-shadow: 0 0 35px var(--gold-glow), 0 0 70px var(--gold-primary), 0 0 100px var(--gold-secondary); }
+        }
+
+        .hero-title-subtitle {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: rgba(255, 215, 0, 0.85);
+            font-weight: 500;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+
+        .hero-title-tagline {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            color: rgba(255, 215, 0, 0.65);
+            margin-top: 15px;
+            font-style: italic;
+            animation: fadeInUp 0.8s ease 0.5s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Decoración alrededor del título */
+        .title-decoration {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            animation: fadeInUp 0.8s ease 0.7s both;
+        }
+        .title-decoration::before,
+        .title-decoration::after {
+            content: '';
+            flex: 1;
+            max-width: 120px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+            animation: lineGlow 2s ease-in-out infinite;
+        }
+        @keyframes lineGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; box-shadow: 0 0 15px var(--gold-glow); }
+        }
+        .title-decoration span {
+            color: var(--gold-secondary);
+            font-size: 1.5rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
 
         /* ===== EFECTOS GLOBALES Y MICRO-EFECTOS ===== */
         *::selection { background: var(--gold-primary); color: var(--black-primary); }
@@ -237,6 +393,12 @@
             box-shadow: 0 25px 70px rgba(0,0,0,0.95), 0 0 60px var(--gold-glow);
             border: 4px solid var(--gold-dark);
             position: relative;
+            z-index: 20;
+            animation: modalPop 0.6s ease 0.2s both;
+        }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
         
         #auth-screen::before {
@@ -255,13 +417,6 @@
             text-shadow: none;
             box-shadow: 0 6px 25px var(--gold-glow);
             animation: float 3s ease-in-out infinite;
-        }
-
-        .auth-title {
-            color: var(--gold-primary);
-            font-size: 2rem;
-            margin: 30px 0 12px;
-            text-shadow: 0 0 18px var(--gold-glow);
         }
 
         .auth-subtitle {
@@ -808,10 +963,6 @@
             position: relative;
             animation: modalPop 0.55s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        @keyframes modalPop {
-            0% { transform: scale(0.7); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
         
         .winner-card::before {
             content: '🏆';
@@ -1152,7 +1303,8 @@
         }
         @media (max-width: 650px) {
             #auth-screen { padding: 40px 35px; margin: 20px; }
-            .auth-title { font-size: 1.7rem; }
+            .hero-title-main { font-size: 2.8rem; }
+            .hero-title-subtitle { font-size: 1rem; }
             .massive-price { font-size: 4rem; }
             .winner-card { padding: 35px 30px; margin: 15px; }
             .winner-price { font-size: 3.5rem; }
@@ -1163,11 +1315,26 @@
 </head>
 <body>
 
-<!-- ========== PÁGINA 1: LOGIN ========== -->
+<!-- ========== PÁGINA 1: LOGIN CON FONDO FUTURISTA ========== -->
 <div id="login-page" class="page active">
+    
+    <!-- Partículas flotantes generadas por JS -->
+    <div id="particles-container"></div>
+    
+    <!-- Efecto scanline -->
+    <div class="scanline"></div>
+    
+    <!-- 🎯 TÍTULO PERSUASIVO PRINCIPAL -->
+    <div class="hero-title">
+        <h1 class="hero-title-main">SUBASTA ARGENTPLAY</h1>
+        <p class="hero-title-subtitle">• La Revolución de las Subastas Premium •</p>
+        <div class="title-decoration"><span>◆</span></div>
+        <p class="hero-title-tagline">50 lotes exclusivos • Pagos seguros • Experiencia única</p>
+    </div>
+    
+    <!-- Formulario de login -->
     <div id="auth-screen" class="float-effect">
-        <h2 class="auth-title text-glow">⚡ Argentplay</h2>
-        <p class="auth-subtitle">Plataforma de Subastas Premium • 50 Lotes Exclusivos</p>
+        <p class="auth-subtitle">Accede para comenzar a ofertar</p>
         
         <input type="text" class="auth-input hover-glow" id="login-name" placeholder="👤 Nombre completo">
         <input type="email" class="auth-input hover-glow" id="login-email" placeholder="📧 Email">
@@ -1398,6 +1565,25 @@
 </div>
 
 <script>
+    // ===== GENERAR PARTÍCULAS FUTURISTAS PARA LOGIN =====
+    function createParticles() {
+        const container = document.getElementById('particles-container');
+        const particleCount = 35;
+        
+        for(let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
+            particle.style.width = particle.style.height = (Math.random() * 3 + 2) + 'px';
+            particle.style.opacity = Math.random() * 0.5 + 0.3;
+            container.appendChild(particle);
+        }
+    }
+    createParticles();
+
     // ===== VARIABLES GLOBALES =====
     let currentUser = null;
     let currentLot = null;
@@ -1411,11 +1597,11 @@
     let inactivityCheckInterval = null;
     
     // Configuración
-    const INACTIVITY_THRESHOLD = 70000; // 70 segundos
-    const CLOSING_DURATION = 3 * 60 * 1000; // 3 minutos
-    const PAYMENT_DURATION = 5 * 60 * 1000; // 5 minutos
+    const INACTIVITY_THRESHOLD = 70000;
+    const CLOSING_DURATION = 3 * 60 * 1000;
+    const PAYMENT_DURATION = 5 * 60 * 1000;
     
-    // Base de datos de lotes (simulada)
+    // Base de datos de lotes
     const lotsDB = {};
     const bannedUsers = new Set();
 
@@ -1429,7 +1615,7 @@
         return id;
     }
 
-    // ===== LOGIN - FUNCIONA CON ID ALEATORIO AUTOMÁTICO =====
+    // ===== LOGIN =====
     function handleLogin() {
         const name = document.getElementById('login-name').value.trim();
         const email = document.getElementById('login-email').value.trim();
@@ -1440,27 +1626,21 @@
             return;
         }
         
-        // 🔥 Generar ID automático aleatorio
         const userId = generateUserID();
         
-        // Verificar si está baneado
         if(bannedUsers.has(userId)) {
             showAlert('🚫 Este ID ha sido penalizado. Contacta a soporte.', 'error');
             return;
         }
         
-        // Guardar usuario
         currentUser = { id: userId, name, email, phone };
         
-        // Actualizar UI
         document.getElementById('display-user-id').innerText = userId;
         document.getElementById('current-user-id-auction').innerText = userId;
         
-        // Efecto de entrada
         document.getElementById('login-page').classList.remove('active');
         document.getElementById('lots-page').classList.add('active');
         
-        // Generar lotes si es la primera vez
         if(Object.keys(lotsDB).length === 0) {
             initializeLots();
         }
@@ -1501,7 +1681,7 @@
                 name: products[(i-1) % products.length],
                 basePrice: Math.floor(Math.random() * 40000) + 10000,
                 image: images[(i-1) % images.length],
-                status: Math.random() > 0.3 ? 'active' : 'inactive', // 70% activos
+                status: Math.random() > 0.3 ? 'active' : 'inactive',
                 description: `Lote exclusivo #${i} - Artículo de colección verificado`
             };
         }
@@ -1540,7 +1720,7 @@
         });
     }
 
-    // ===== ENTRAR A SUBASTA DE UN LOTE =====
+    // ===== ENTRAR A SUBASTA =====
     function enterAuction(lotId) {
         const lot = lotsDB[lotId];
         if(!lot || lot.status !== 'active') {
@@ -1553,7 +1733,6 @@
         lastBidTime = Date.now();
         auctionState = 'active';
         
-        // Actualizar UI de la sala
         document.getElementById('auction-lot-name').innerText = `Lote #${lot.id}: ${lot.name}`;
         document.getElementById('auction-lot-base').innerText = `Base: $${lot.basePrice.toLocaleString()} • Comisión: 8% + Seña: 22%`;
         document.getElementById('auction-image').src = lot.image;
@@ -1562,13 +1741,10 @@
         updatePriceDisplay();
         updateCommissionDisplay();
         
-        // Cambiar de página
         document.getElementById('lots-page').classList.remove('active');
         document.getElementById('auction-page').classList.add('active');
         
-        // Iniciar monitoreo
         startInactivityMonitor();
-        
         showAlert(`🎯 Subasta del Lote #${lot.id} iniciada`, 'success');
     }
 
@@ -1587,7 +1763,6 @@
         document.getElementById('commission-seller').innerText = `$ ${seller.toLocaleString()}`;
         document.getElementById('commission-total').innerText = `$ ${total.toLocaleString()}`;
         
-        // También actualizar en modal de ganador
         document.getElementById('pay-platform').innerText = `$ ${platform.toLocaleString()}`;
         document.getElementById('pay-seller').innerText = `$ ${seller.toLocaleString()}`;
         document.getElementById('payment-amount-total').innerText = `$ ${total.toLocaleString()}`;
@@ -1607,7 +1782,6 @@
         updatePriceDisplay();
         updateCommissionDisplay();
         showTensionMessage('¡Has tomado la delantera! 🏆');
-        
         if(auctionState === 'closing') resetClosingCountdown();
     }
     
@@ -1623,7 +1797,6 @@
             updatePriceDisplay();
             updateCommissionDisplay();
             showTensionMessage('¡Oferta agresiva registrada! 💎');
-            
             if(auctionState === 'closing') resetClosingCountdown();
         } else {
             showAlert('La oferta debe ser superior al precio actual', 'error');
@@ -1637,7 +1810,7 @@
         setTimeout(() => el.style.animation = 'slideIn 0.35s ease', 10);
     }
 
-    // ===== COUNTDOWN POR INACTIVIDAD (70s → 3min cierre) =====
+    // ===== COUNTDOWN POR INACTIVIDAD =====
     function startInactivityMonitor() {
         clearInterval(inactivityCheckInterval);
         inactivityCheckInterval = setInterval(() => {
@@ -1699,8 +1872,7 @@
         document.getElementById('winner-final-price').innerText = currentPrice.toLocaleString();
         document.getElementById('winner-ref').innerText = `ARGPAY-${ref}`;
         
-        updateCommissionDisplay(); // Actualizar montos en modal
-        
+        updateCommissionDisplay();
         document.getElementById('winner-modal').style.display = 'flex';
         startPaymentTimer();
     }
@@ -1720,7 +1892,7 @@
         }
     }
 
-    // ===== TIMER DE PAGO (5 MIN) =====
+    // ===== TIMER DE PAGO =====
     function startPaymentTimer() {
         auctionState = 'payment_pending';
         let remaining = PAYMENT_DURATION;
@@ -1760,7 +1932,6 @@
         clearInterval(paymentTimerInterval);
         auctionState = 'completed';
         
-        // Mostrar datos de vendedor y comprador (simulado)
         document.getElementById('winner-modal').innerHTML = `
             <div class="winner-card" style="border-color: #3b82f6;">
                 <div style="font-size: 5rem; margin-bottom: 15px;">✅</div>
@@ -1796,8 +1967,6 @@
     
     function handlePaymentTimeout() {
         auctionState = 'timeout';
-        
-        // 🔥 PENALIZAR USUARIO: Banear ID
         bannedUsers.add(currentUser.id);
         
         document.getElementById('winner-modal').innerHTML = `
@@ -1832,7 +2001,6 @@
         document.getElementById('restart-notice').style.display = 'block';
         document.getElementById('tension-text').innerText = '';
         
-        // Restaurar modal
         document.getElementById('winner-modal').innerHTML = `
             <div class="winner-card">
                 <h2>🎉 ¡FELICITACIONES!</h2>
@@ -1925,7 +2093,6 @@
         }
     }
     
-    // Preview en tiempo real del admin
     ['admin-lot-number', 'admin-lot-name', 'admin-lot-base', 'admin-lot-status'].forEach(id => {
         document.getElementById(id)?.addEventListener('input', () => {
             const num = document.getElementById('admin-lot-number').value || 'X';
